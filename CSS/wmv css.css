@@ -1,0 +1,82 @@
+@charset "utf-8";
+/* CSS Document */
+
+body {
+	
+	background-image: url('wmv background.jpg');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+  	background-size: cover;
+	margin: 0;
+	padding: 0;
+	
+}
+
+.welcome{
+	color: whitesmoke;
+	text-align: center;
+	margin: 100px 50px 30px 100px;
+	
+	font-display: auto;
+	font-style: italic;
+	font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', 'monospace';
+}
+
+.profile{
+
+	margin-top: 100px;
+	margin-left: 200px;
+	margin-right: 50px;
+	height: 300px;
+	width: 290px;
+}
+
+.about-me{
+	color: whitesmoke;
+	margin: 25px 50px 75px 50px;
+	display: flex;
+	align-items: center;
+   
+	
+	font-display: auto;
+	font-style: italic;
+	font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', 'monospace';
+	
+}
+
+.h1schedule{
+	color: whitesmoke;
+	text-align: center;
+	margin: 25px 50px 10px 50px;
+	
+	
+	font-display: auto;
+	font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', 'monospace';
+	
+}
+
+table {
+
+	background:rgba(143,222,196,.3);
+	background-opacity: 0.5;
+	border: 1px solid #E5DEDE;
+	border-collapse: collapse;
+	border-style: solid;
+	text-align: center;
+	margin: 25px 50px 75px 130px;
+	color: whitesmoke;
+}
+th,td{
+	width: 300px;
+	padding: 10px;
+	
+}
+
+tr:hover{
+	background-color: #38D49C;
+}
+
+.iframe1{
+	
+	margin: 25px 50px 75px 130px;
+}
