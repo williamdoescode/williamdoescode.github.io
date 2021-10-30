@@ -80,3 +80,8 @@ tr:hover{
 	
 	margin: 25px 50px 75px 130px;
 }
+.tableau1{
+	
+	display: flex;
+	align-items: center;
+}
