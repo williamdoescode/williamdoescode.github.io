@@ -457,6 +457,26 @@ article .icon {
     margin-left: -400%;
 }
 
+#inventory1:checked ~ .i1 {
+    margin-left: 0;
+}
+
+#inventory2:checked ~ .i2 {
+    margin-left: -100%;
+}
+
+#inventory3:checked ~ .i3 {
+    margin-left: -200%;
+}
+
+#inventory4:checked ~ .i4 {
+    margin-left: -300%;
+}
+
+#inventory5:checked ~ .i5 {
+    margin-left: -400%;
+}
+
 /* CONTACT */
 
 #contact {
