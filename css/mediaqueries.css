@@ -1,147 +1,139 @@
-/* Media Queries */
+/* =========================================
+   MEDIAQUERIES — Lo-Fi Portfolio
+   ========================================= */
 
-/* Tablet (Max 1024px) */
-@media screen and (max-width: 1024px) {
-    .profile-content {
-        flex-direction: column-reverse;
+/* ─── Tablet (≤ 1024px) ─────────────────── */
+@media (max-width: 1024px) {
+    #profile {
+        grid-template-columns: 1fr;
         text-align: center;
         gap: 3rem;
     }
 
-    #profile {
-        padding-top: 120px;
-    }
-
-    .section__text {
-        display: flex;
-        flex-direction: column;
+    .profile-content {
         align-items: center;
     }
 
-    #profile .title {
-        font-size: 3rem;
+    .hero-desc {
+        max-width: 60ch;
+    }
+
+    .hero-decoration {
+        min-height: 260px;
+    }
+
+    .about-container {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .about-cards {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .about-card {
+        flex: 1 1 calc(50% - 0.5rem);
+        min-width: 200px;
+    }
+
+    .experience-grid {
+        grid-template-columns: 1fr 1fr;
     }
 
     .projects-grid {
         grid-template-columns: 1fr;
     }
-
-    .experience-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
-/* Mobile (Max 768px) */
-@media screen and (max-width: 768px) {
+/* ─── Mobile (≤ 768px) ──────────────────── */
+@media (max-width: 768px) {
+    .section-padding {
+        padding: 4rem 5%;
+    }
+
+    /* Nav */
     #desktop-nav {
         display: none;
     }
 
     #hamburger-nav {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.5rem 2rem;
-        width: 100%;
-        max-width: 1400px;
-        margin: 0 auto;
     }
 
-    .hamburger-menu {
-        position: relative;
-    }
-
-    .hamburger-icon {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 24px;
-        width: 30px;
-        cursor: pointer;
-        z-index: 10;
-    }
-
-    .hamburger-icon span {
-        width: 100%;
-        height: 3px;
-        background-color: var(--text-main);
-        transition: all 0.3s ease-in-out;
-        border-radius: 10px;
-    }
-
-    .menu-links {
-        position: absolute;
-        top: 200%;
-        right: 0;
-        background-color: var(--bg-card);
-        width: max-content;
-        max-height: 0;
-        overflow: hidden;
-        transition: all 0.4s ease-in-out;
-        border-radius: var(--radius-md);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        z-index: 5;
-    }
-
-    .menu-links ul {
-        padding: 0 1rem;
-    }
-
-    .menu-links a {
-        display: block;
-        padding: 15px 30px;
-        text-align: center;
-        font-size: 1.125rem;
-        color: var(--text-main);
-        text-decoration: none;
-        transition: all 0.3s ease-in-out;
-        border-radius: 8px;
-    }
-
-    .menu-links a:hover {
-        background-color: var(--bg-secondary);
-        color: var(--accent-primary);
-    }
-
-    .menu-links.open {
-        max-height: 400px;
-        padding: 1rem 0;
-    }
-
-    .hamburger-icon.open span:first-child {
-        transform: rotate(45deg) translate(8px, 6px);
-    }
-
-    .hamburger-icon.open span:nth-child(2) {
-        opacity: 0;
-    }
-
-    .hamburger-icon.open span:last-child {
-        transform: rotate(-45deg) translate(8px, -7px);
-    }
-
-    /* Adjustments */
-    .pic-wrapper {
-        width: 250px;
-        height: 250px;
-    }
-
-    :root {
-        --section-pad: 5rem 1.5rem;
-    }
-
-    .contact-card {
-        padding: 2rem 1.5rem;
+    /* Hero */
+    #profile {
+        padding-top: 70px;
         gap: 2rem;
-        flex-direction: column;
-        align-items: flex-start;
+    }
+
+    .hero-decoration {
+        display: none;
     }
 
     .title {
-        font-size: 2rem;
+        font-size: clamp(2rem, 10vw, 3rem);
     }
 
-    .skills-list {
+    .about-cards {
+        flex-direction: column;
+    }
+
+    .about-card {
+        flex: 1 1 100%;
+    }
+
+    .about-stats {
+        gap: 1.2rem;
+        flex-wrap: wrap;
+    }
+
+    /* Skills → 1 col */
+    .experience-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* Contact */
+    .contact-wrapper {
+        max-width: 100%;
+    }
+
+    .contact-card {
+        padding: 1.2rem;
+    }
+
+    /* Footer */
+    .footer-inner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* Deco cards hidden on small screens */
+    .deco-card {
+        display: none;
+    }
+}
+
+/* ─── Small Mobile (≤ 480px) ───────────── */
+@media (max-width: 480px) {
+    .btn-container {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-gallery-wrapper {
+        height: 180px;
+    }
+
+    .stat-num {
+        font-size: 1.6rem;
     }
 }
