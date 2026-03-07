@@ -1,350 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>Portfolio</title>
-    <scripts src="../portfolio/js/script.js"></script>
-    <link rel="stylesheet" href="/css/fontawesome/css/fontawesome.min.css"> 
-    <link rel="stylesheet" href="/css/fontawesome/css/fontawesome.css">   
-    <link rel="stylesheet" href="/css/fontawesome/css/all.css"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>William Velasco - Web Developer</title>
+    
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons and Styles -->
     <link rel="stylesheet" href="/css/fontawesome/css/all.min.css"> 
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/mediaqueries.css">
-    </head>
-    <!-- BODY -->
-    <body>
-    <nav id="desktop-nav">
-    <div class="logo">William</div>
-    <div>
-        <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#experience">Experience</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#contact">Contact</a></li>
-        </ul>
-    </div>
-    </nav>
-    <nav id="hamburger-nav">
-        <div class="logo">William</div>
-        <div class="hamburger-menu">
-            <div class="hamburger-icon" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header>
+        <nav id="desktop-nav">
+            <div class="logo">William.</div>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <nav id="hamburger-nav">
+            <div class="logo">William.</div>
+            <div class="hamburger-menu">
+                <div class="hamburger-icon" onclick="toggleMenu()" tabindex="0" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="menu-links">
+                    <ul>
+                        <li><a href="#about" onclick="toggleMenu()">About</a></li>
+                        <li><a href="#experience" onclick="toggleMenu()">Experience</a></li>
+                        <li><a href="#projects" onclick="toggleMenu()">Projects</a></li>
+                        <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+                    </ul>
+                </div>  
             </div>
-            <div class="menu-links">
-                <li><a href="#about" onclick="toggleMenu()">About</a></li>
-                <li><a href="#experience" onclick="toggleMenu()">Experience</a></li>
-                <li><a href="#Projects" onclick="toggleMenu()">Projects</a></li>
-                <li><a href="#Contact" onclick="toggleMenu()">Contact</a></li>
-            </div>  
-        </div>
-    </nav>
-    <section id="profile">
-        <div class="section__pic-container">
-            <img class="main-pic" src="/images/wmv.png" alt="William">
-        </div>
-        <div class="section__text">
-            <p class="section__text__p1">Hello, I'm</p>
-            <h1 class="title">William</h1>
-            <p class="section__text__p2">Web Developer</p>
-            <div class="btn-container">
-                <button alt="My Resume" class="btn btn-color-2" onclick="window.open('./files/wmv-resume.pdf')">
-                Download CV
-                </button>
-                <button alt="My Linkedin Profile" class="btn btn-color-1" onclick="location.href='./#contact'">
-                Contact Info
-                </button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="profile">
+            <div class="profile-content reveal">
+                <div class="section__text">
+                    <p class="section__text__p1">Hello, I'm</p>
+                    <h1 class="title">William Velasco</h1>
+                    <p class="section__text__p2">Web Developer</p>
+                    
+                    <div class="btn-container">
+                        <button class="btn btn-primary" onclick="window.open('./files/wmv-resume.pdf')">
+                            Download CV
+                        </button>
+                        <button class="btn btn-secondary" onclick="location.href='./#contact'">
+                            Contact Info
+                        </button>
+                    </div>
+                    
+                    <div id="socials-container">
+                        <a class="social-icon" href="https://www.linkedin.com/in/william-miguel-velasco-064844196/" target="_blank" aria-label="LinkedIn">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </a>
+                        <a class="social-icon" href="https://github.com/williamdoescode" target="_blank" aria-label="GitHub">
+                            <i class="fa-brands fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="section__pic-container">
+                    <div class="pic-wrapper">
+                        <img class="main-pic" src="/images/wmv.png" alt="William Velasco Profile Picture">
+                    </div>
+                </div>
             </div>
-            <div id="socials-container">
-                <a class="icon" alt="My linkedin Profile" href="https://www.linkedin.com/in/william-miguel-velasco-064844196/" target="_blank"><i class="fa-brands fa-linkedin-in" style="color: #004cff;"></i></i></a>
-                <a class="icon" alt="My Github Profile"  href="https://github.com/williamdoescode" target="_blank"><i class="fa-brands fa-github" style="color: #630099;"></i></a>
+            <a class="scroll-down" href="#about" aria-label="Scroll down">
+                <i class="fa-solid fa-chevron-down"></i>
+            </a>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="reveal section-padding">
+            <div class="section-header">
+                <p class="section__text__p1">Get To Know More</p>
+                <h2 class="title">About Me</h2>
             </div>
-        </div>
-        <a class="arrow-profile"><i class="fa-solid fa-angles-down" onclick="location.href='./#about'"></i>
-        </a>
-    </section>
-    <section id="about">
-        <p class="section__text__p1"> Get To Know  More</p>
-        <h1 class="title"> About Me </h1>
-        <div class="section-container">
-            <!-- <div class="section__pic-container">
-                <img
-                src="/images/wmv.png"
-                alt="Profile Picture"
-                class="about-pic"
-                />
-            </div> -->
-        <div class="about-details-container">
+            
             <div class="about-container">
-                <div class="details-container">
-                    <i class="fa-solid fa-medal"></i>
-                    <h3>Experience</h3>
-                    <p>Web Development <br/> Software Development</p>
+                <div class="about-cards">
+                    <div class="about-card">
+                        <i class="fa-solid fa-medal icon-large"></i>
+                        <h3>Experience</h3>
+                        <p>Web Development<br/>Software Development</p>
+                    </div>
+                    <div class="about-card">
+                        <i class="fa-solid fa-user-graduate icon-large"></i>
+                        <h3>Education</h3>
+                        <p>B.S. Information Technology</p>
+                    </div>
                 </div>
-                <br>
-                <div class="details-container">
-                    <i class="fa-solid fa-user-graduate"></i>
-                    <h3>Education</h3>
-                    <p>Bachelor of Science in Information Technology</p>
-                </div>
-            </div>
-                <div class="text-container">
-                    <p>Greetings! I am an aspiring IT professional with a passion for crafting engaging and efficient web solutions. 
-                        My expertise lies in web development using Laravel, PHP and MySQL, honed through practical experiences and projects.
+                
+                <div class="about-text">
+                    <p>
+                        Greetings! I am an aspiring IT professional with a passion for crafting engaging and efficient web solutions. 
+                        My expertise lies in web development using Laravel, PHP, and MySQL, honed through practical experiences and projects.
                         I want to continue growing as a web developer, staying updated with the latest trends and technologies.
-                        <br> <br>
+                    </p>
+                    <p>
                         I aim to contribute to innovative projects, collaborate with talented teams, and make a meaningful impact in the tech industry.
                         Feel free to explore my portfolio to view the projects I've worked on and the skills I've acquired. If you're interested in discussing potential 
                         collaboration or have any inquiries, don't hesitate to reach out.
                     </p>
                 </div>
-        </div>
-    </div>
-    <a class="arrow"><i class="fa-solid fa-angles-down" onclick="location.href='./#experience'"></i>
-    </a>
-    </section>
-    <section id="experience">
-        <p class="section__text__p1">Explore my</p>
-        <h1 class="title">Experience</h1>
-        <div class="experience-details-container">
-            <div class="about-container">
-            <div class="details-container">
-                <h2 class="experience-sub-title">Front-End Development</h2>
-                <div class="article-container">
-                <article>
-                    <a class="icon"><i class="fa-solid fa-check"></i></a>
-                    <div>
-                        <h3>HTML</h3>
-                        <p>Advanced</p>
-                    </div>
-                </article>
-                <article>
-                    <a class="icon"><i class="fa-solid fa-check"></i></a>
-                    <div>
-                        <h3>CSS</h3>
-                        <p>Advanced</p>
-                    </div>
-                </article>
-                <article>
-                    <a class="icon"><i class="fa-solid fa-check"></i></a>
-                    <div>
-                        <h3>JavaScript</h3>
-                        <p>Advanced</p>
-                    </div>
-                </article>
-                <article>
-                    <a class="icon"><i class="fa-solid fa-check"></i></a>
-                    <div>
-                        <h3>React JS</h3>
-                        <p>Entry Level - Intermediate</p>
-                    </div>
-                </article>
-             </div>
             </div>
-            <div class="details-container">
-                <h2 class="experience-sub-title">Back-End Development</h2>
-                    <div class="article-container">
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Ajax</h3>
-                            <p>Advanced</p>
-                        </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Vanilla PHP</h3>
-                            <p>Advanced</p>
-                        </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Laravel 10/11</h3>
-                            <p>Advanced</p>
-                        </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Python</h3>
-                            <p>Intermediate</p>
-                        </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>MYSQL w/ XAMPP</h3>
-                            <p>Advanced</p>
-                        </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>MYSQL Workbench</h3>
-                            <p>Advanced</p>
-                        </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>MS SQL</h3>
-                            <p>Intermediate</p>
-                        </div>
-                    </article>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="reveal section-padding">
+            <div class="section-header">
+                <p class="section__text__p1">Explore my</p>
+                <h2 class="title">Skills & Experience</h2>
+            </div>
+            
+            <div class="experience-grid">
+                <!-- Frontend -->
+                <div class="experience-card">
+                    <h3 class="experience-sub-title">Front-End</h3>
+                    <div class="skills-list">
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>HTML</h4>
+                                <p>Advanced</p>
+                            </div>
+                        </article>
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>CSS</h4>
+                                <p>Advanced</p>
+                            </div>
+                        </article>
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>JavaScript</h4>
+                                <p>Advanced</p>
+                            </div>
+                        </article>
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>React JS</h4>
+                                <p>Intermediate</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- Backend -->
+                <div class="experience-card">
+                    <h3 class="experience-sub-title">Back-End</h3>
+                    <div class="skills-list">
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>Vanilla PHP</h4>
+                                <p>Advanced</p>
+                            </div>
+                        </article>
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>Laravel</h4>
+                                <p>Advanced</p>
+                            </div>
+                        </article>
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>MySQL / MS SQL</h4>
+                                <p>Advanced</p>
+                            </div>
+                        </article>
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>Python</h4>
+                                <p>Intermediate</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <!-- Tools & Others -->
+                <div class="experience-card">
+                    <h3 class="experience-sub-title">Tools & APIs</h3>
+                    <div class="skills-list">
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>Servers</h4>
+                                <p>cPanel, Digital Ocean</p>
+                            </div>
+                        </article>
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>APIs Integration</h4>
+                                <p>Xero, Stripe, Klaviyo</p>
+                            </div>
+                        </article>
+                        <article class="skill-item">
+                            <i class="fa-solid fa-circle-check skill-icon"></i>
+                            <div>
+                                <h4>Web Tech</h4>
+                                <p>Ajax, Discord Bots</p>
+                            </div>
+                        </article>
+                    </div>
                 </div>
             </div>
-            <div class="details-container">
-                <h2 class="experience-sub-title">Others</h2>
-                    <div class="article-container">
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Cpanel</h3>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="reveal section-padding">
+            <div class="section-header">
+                <p class="section__text__p1">Browse My</p>
+                <h2 class="title">Recent Projects</h2>
+            </div>
+            
+            <div class="projects-grid">
+                <!-- Project 1 -->
+                <div class="project-card">
+                    <div class="project-gallery-wrapper">
+                        <div class="project-gallery">
+                            <img src="/images/atpeis 1.png" alt="ATPEIS Screenshot 1">
+                            <img src="/images/atpeis 2.png" alt="ATPEIS Screenshot 2" loading="lazy">
+                            <img src="/images/atpeis 3.png" alt="ATPEIS Screenshot 3" loading="lazy">
+                            <img src="/images/atpeis 4.png" alt="ATPEIS Screenshot 4" loading="lazy">
+                            <img src="/images/atpeis 5.png" alt="ATPEIS Screenshot 5" loading="lazy">
                         </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Digital Ocean</h3>
+                        <div class="scroll-hint">
+                            <i class="fa-solid fa-arrows-left-right"></i> Scroll for more
                         </div>
-                    </article>
-                     <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Cron Job Configuration</h3>
+                    </div>
+                    <div class="project-info">
+                        <h3>ATPEIS</h3>
+                        <p>Assignment Tracking and Performance Evaluation Information System.</p>
+                        <div class="project-tags">
+                            <span>PHP</span>
+                            <span>MySQL</span>
+                            <span>Laravel</span>
                         </div>
-                    </article>
-                     <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Discord Bot (Python)</h3>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="project-card">
+                    <div class="project-gallery-wrapper">
+                        <div class="project-gallery">
+                            <img src="/images/inventory 1.png" alt="Inventory Screenshot 1">
+                            <img src="/images/inventory 2.png" alt="Inventory Screenshot 2" loading="lazy">
+                            <img src="/images/inventory 3.png" alt="Inventory Screenshot 3" loading="lazy">
+                            <img src="/images/inventory 4.png" alt="Inventory Screenshot 4" loading="lazy">
+                            <img src="/images/inventory 5.png" alt="Inventory Screenshot 5" loading="lazy">
                         </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Currency Exchange Rate API</h3>
+                        <div class="scroll-hint">
+                            <i class="fa-solid fa-arrows-left-right"></i> Scroll for more
                         </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Xero API</h3>
+                    </div>
+                    <div class="project-info">
+                        <h3>Inventory System</h3>
+                        <p>A comprehensive inventory management system with custom features.</p>
+                        <div class="project-tags">
+                            <span>Laravel 10</span>
+                            <span>MySQL Workbench</span>
                         </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Klaviyo API</h3>
-                        </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Stripe API</h3>
-                        </div>
-                    </article>
-                    <article>
-                        <a class="icon"><i class="fa-solid fa-check"></i></a>
-                        <div>
-                            <h3>Sanction Scanner API</h3>
-                        </div>
-                    </article>
+                    </div>
                 </div>
             </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="reveal section-padding">
+            <div class="section-header">
+                <p class="section__text__p1">Get in Touch</p>
+                <h2 class="title">Contact Me</h2>
             </div>
-         </div>
-         <a class="arrow-experience" onclick="location.href='./#projects'"><i class="fa-solid fa-angles-down"></i></a>
-    </section>
-    <section id="projects">
-        <div class="project-title">
-            <p class="section__text__p1">Browse Projects</p>
-            <h1 class="title">Projects</h1>
-        </div>
-        <div class="experience-details-container">
-            <div class="project-details-container">
-                <h2>ATPEIS</h2>
-                <p>Assignment Tracking and Performance Evaluation Information System</p>
-                <p>(Image Preview Only)</p>
-                <br>
-                <div class="project-article-container">
-                    <div class="slider-frame">
-                        <div class="slide-images">
-                            <input type="radio" name="slide" id="img1" checked>
-                            <input type="radio" name="slide" id="img2">
-                            <input type="radio" name="slide" id="img3">
-                            <input type="radio" name="slide" id="img4">
-                            <input type="radio" name="slide" id="img5">
+            
+            <div class="contact-card">
+                <div class="contact-info-item">
+                    <div class="icon-circle">
+                        <i class="fa-regular fa-envelope"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>Email</h3>
+                        <a href="mailto:williamvelasco41@gmail.com">williamvelasco41@gmail.com</a>
+                    </div>
+                </div>
                 
-                            <img class="m1" src="/images/atpeis 1.png">
-                            <img class="m2" src="/images/atpeis 2.png">
-                            <img class="m3" src="/images/atpeis 3.png">
-                            <img class="m4" src="/images/atpeis 4.png">
-                            <img class="m5" src="/images/atpeis 5.png">
-                        </div>
-                    </div>          
-                </div>  
-                <div class="slider-dots">
-                    <label for="img1"></label>
-                    <label for="img2"></label>
-                    <label for="img3"></label>
-                    <label for="img4"></label>
-                    <label for="img5"></label>
-                </div>   
-            </div> 
-        </div>
-        <div class="experience-details-container">
-            <div class="project-details-container">
-                <h2>Inventory System with Custom Features</h2>
-                <p>Laravel 10 with MYSQL Workbench</p>
-                <p>(Image Preview Only)</p>
-                <br>
-                <div class="project-article-container">
-                    <div class="slider-frame">
-                        <div class="slide-images">
-                            <input type="radio" name="slide" id="inventory1" checked>
-                            <input type="radio" name="slide" id="inventory2">
-                            <input type="radio" name="slide" id="inventory3">
-                            <input type="radio" name="slide" id="inventory4">
-                            <input type="radio" name="slide" id="inventory5">
-                
-                            <img class="i1" src="/images/inventory 1.png">
-                            <img class="i2" src="/images/inventory 2.png">
-                            <img class="i3" src="/images/inventory 3.png">
-                            <img class="i4" src="/images/inventory 4.png">
-                            <img class="i5" src="/images/inventory 5.png">
-                        </div>
-                    </div>          
-                </div>  
-                <div class="slider-dots">
-                    <label for="inventory1"></label>
-                    <label for="inventory2"></label>
-                    <label for="inventory3"></label>
-                    <label for="inventory4"></label>
-                    <label for="inventory5"></label>
-                </div>   
-            </div> 
-        </div>
-        <a class="arrow-experience" onclick="location.href='./#contact'"><i class="fa-solid fa-angles-down"></i></a>
-    </section>
-    <section id="contact">
-        <p class="section__text__p1">Get in Touch</p>
-        <h1 class="title">Contact Me</h1>
-        <div class="contact-info-upper-container">
-            <div class="contact-info-container">
-            <a class="icon contact-icon"><i class="fa-regular fa-paper-plane"></i></a>
-            <p><a href="mailto:williamvelasco41@gmail.com">williamvelasco41@gmail.com</a></p>
+                <div class="contact-info-item">
+                    <div class="icon-circle linkedin-blue">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </div>
+                    <div class="contact-text">
+                        <h3>LinkedIn</h3>
+                        <a href="https://www.linkedin.com/in/william-miguel-velasco-064844196/" target="_blank">Connect with me</a>
+                    </div>
+                </div>
             </div>
-            <div class="contact-info-container">
-            <a class="icon contact-icon" ><i class="fa-brands fa-linkedin-in" style="color: #005eff;"></i></a>
-            <p><a href="https://www.linkedin.com/in/william-miguel-velasco-064844196/" target="_blank">Linkedin</a></p>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2026 William Velasco. All Rights Reserved.</p>
+    </footer>
+
     <script src="js/script.js"></script>
-    </body>
-</html> 
+</body>
+</html>
