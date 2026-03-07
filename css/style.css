@@ -1,26 +1,33 @@
-/* MODERN CSS DESIGN SYSTEM */
+/* LO-FI CSS DESIGN SYSTEM */
 :root {
-    /* Colors */
-    --bg-main: #0f172a;       /* Deep slate/navy dark mode */
-    --bg-secondary: #1e293b;  /* Slate 800 */
-    --bg-card: #334155;       /* Slate 700 */
-    
-    --text-main: #f8fafc;     /* Slate 50 */
-    --text-muted: #94a3b8;    /* Slate 400 */
-    
-    --accent-primary: #3b82f6; /* Blue 500 */
-    --accent-hover: #60a5fa;   /* Blue 400 */
-    --accent-glow: rgba(59, 130, 246, 0.5);
+    /* Lo-Fi Warm/Latte Theme */
+    --bg-main: #f5f0e6;
+    /* Oat background */
+    --bg-secondary: #e8e2d2;
+    /* Slightly darker warm tone */
+    --bg-card: #fdfcfa;
+    /* Off-white */
+
+    --text-main: #4a4238;
+    /* Espresso dark brown */
+    --text-muted: #8c8273;
+    /* Warm beige-gray */
+
+    --accent-primary: #869677;
+    /* Matcha green */
+    --accent-hover: #728065;
+    /* Darker matcha */
+    --accent-glow: rgba(134, 150, 119, 0.3);
 
     /* Typography */
-    --font-heading: 'Inter', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
 
     /* Spacing & Layout */
     --section-pad: 8rem 2rem;
     --radius-md: 12px;
     --radius-lg: 24px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Reset & Base */
@@ -41,6 +48,8 @@ body {
     color: var(--text-main);
     line-height: 1.6;
     overflow-x: hidden;
+    /* subtle noise pattern for lo-fi feel */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
 }
 
 a {
@@ -60,10 +69,14 @@ img {
 }
 
 /* Typography Base */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
     font-family: var(--font-heading);
     font-weight: 700;
     line-height: 1.2;
+    letter-spacing: -0.02em;
 }
 
 p {
@@ -91,16 +104,17 @@ p {
 }
 
 .title {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: var(--text-main);
 }
 
 /* Animations Trigger */
 .reveal {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(30px);
     transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
+
 .reveal.active {
     opacity: 1;
     transform: translateY(0);
@@ -113,10 +127,12 @@ header {
     left: 0;
     width: 100%;
     z-index: 100;
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(245, 240, 230, 0.85);
+    /* Matches latte bg */
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(74, 66, 56, 0.05);
+    /* Dark espresso border */
 }
 
 #desktop-nav {
@@ -130,6 +146,7 @@ header {
 
 .logo {
     font-size: 1.5rem;
+    font-family: var(--font-heading);
     font-weight: 700;
     color: var(--text-main);
     letter-spacing: -0.5px;
@@ -199,7 +216,7 @@ header {
 .btn-primary:hover {
     background-color: var(--accent-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+    box-shadow: 0 6px 20px rgba(134, 150, 119, 0.4);
 }
 
 .btn-secondary {
@@ -210,7 +227,8 @@ header {
 
 .btn-secondary:hover {
     border-color: var(--text-main);
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(74, 66, 56, 0.05);
+    /* Soft dark hover */
     transform: translateY(-2px);
 }
 
@@ -222,7 +240,7 @@ header {
     justify-content: center;
     align-items: center;
     position: relative;
-    padding-top: 80px; /* Accounts for fixed nav */
+    padding-top: 80px;
 }
 
 .profile-content {
@@ -245,12 +263,10 @@ header {
 }
 
 #profile .title {
-    font-size: 4rem;
+    font-size: 4.5rem;
     line-height: 1.1;
     margin: 0.5rem 0;
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-main);
 }
 
 #socials-container {
@@ -267,16 +283,19 @@ header {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-card);
     color: var(--text-main);
     font-size: 1.25rem;
     transition: var(--transition);
+    border: 1px solid rgba(74, 66, 56, 0.08);
 }
 
 .social-icon:hover {
     background-color: var(--accent-primary);
+    color: white;
     transform: translateY(-3px);
     box-shadow: 0 4px 12px var(--accent-glow);
+    border-color: var(--accent-primary);
 }
 
 .section__pic-container {
@@ -290,12 +309,12 @@ header {
     width: 350px;
     height: 350px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 10px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 40px rgba(74, 66, 56, 0.1);
 }
 
 .pic-wrapper::before {
@@ -309,8 +328,13 @@ header {
 }
 
 @keyframes rotate {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .main-pic {
@@ -333,9 +357,22 @@ header {
 }
 
 @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(10px); }
-    60% { transform: translateY(5px); }
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(10px);
+    }
+
+    60% {
+        transform: translateY(5px);
+    }
 }
 
 /* About Section */
@@ -354,18 +391,21 @@ header {
 }
 
 .about-card {
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-card);
     padding: 2.5rem;
     border-radius: var(--radius-lg);
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(74, 66, 56, 0.08);
+    /* Soft brown border */
     transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(74, 66, 56, 0.03);
+    /* Subtle depth */
 }
 
 .about-card:hover {
     transform: translateY(-5px);
-    border-color: rgba(255,255,255,0.1);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border-color: rgba(74, 66, 56, 0.15);
+    box-shadow: 0 10px 30px rgba(74, 66, 56, 0.08);
 }
 
 .icon-large {
@@ -399,10 +439,11 @@ header {
 }
 
 .experience-card {
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-card);
     padding: 3rem 2rem;
     border-radius: var(--radius-lg);
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(74, 66, 56, 0.08);
+    box-shadow: 0 4px 15px rgba(74, 66, 56, 0.03);
 }
 
 .experience-sub-title {
@@ -448,42 +489,44 @@ header {
 }
 
 .project-card {
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-card);
     border-radius: var(--radius-lg);
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(74, 66, 56, 0.08);
     transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(74, 66, 56, 0.03);
 }
 
 .project-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 15px 40px rgba(74, 66, 56, 0.1);
+    border-color: rgba(74, 66, 56, 0.15);
 }
 
 .project-gallery-wrapper {
     position: relative;
-    background-color: #000;
+    background-color: var(--bg-secondary);
+    /* Softer image background */
 }
 
 .project-gallery {
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scrollbar-width: none; /* Firefox */
+    scrollbar-width: none;
 }
 
 .project-gallery::-webkit-scrollbar {
-    display: none; /* Safari/Chrome */
+    display: none;
 }
 
 .project-gallery img {
     flex: 0 0 100%;
     width: 100%;
     height: 300px;
-    object-fit: contain; /* Using contain to better fit full images without cutting */
+    object-fit: contain;
     scroll-snap-align: start;
-    opacity: 0.8;
+    opacity: 0.9;
     transition: opacity 0.3s;
     background-color: var(--bg-secondary);
 }
@@ -496,15 +539,19 @@ header {
     position: absolute;
     bottom: 10px;
     right: 15px;
-    background: rgba(0,0,0,0.6);
-    color: #fff;
-    padding: 5px 10px;
+    background: rgba(245, 240, 230, 0.85);
+    /* Light blurred hint */
+    backdrop-filter: blur(4px);
+    color: var(--text-main);
+    padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.75rem;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     pointer-events: none;
+    border: 1px solid rgba(74, 66, 56, 0.1);
 }
 
 .project-info {
@@ -528,21 +575,21 @@ header {
 }
 
 .project-tags span {
-    background-color: var(--bg-card);
+    background-color: var(--bg-secondary);
     color: var(--text-main);
     padding: 0.4rem 1rem;
     border-radius: 50px;
     font-size: 0.875rem;
     font-weight: 500;
-    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Contact Section */
 .contact-card {
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-card);
     padding: 3rem;
     border-radius: var(--radius-lg);
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(74, 66, 56, 0.08);
+    box-shadow: 0 4px 15px rgba(74, 66, 56, 0.03);
     max-width: 800px;
     margin: 0 auto;
     display: flex;
@@ -561,7 +608,7 @@ header {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background-color: var(--bg-card);
+    background-color: var(--bg-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -597,8 +644,8 @@ header {
 footer {
     text-align: center;
     padding: 3rem 1rem;
-    background-color: var(--bg-secondary);
-    border-top: 1px solid rgba(255,255,255,0.05);
+    background-color: var(--bg-card);
+    border-top: 1px solid rgba(74, 66, 56, 0.05);
 }
 
 footer p {
