@@ -1,484 +1,454 @@
-<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="en">
-
-
-<head>
+  <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="William Velasco - Web Developer portfolio. Laravel, PHP, MySQL specialist.">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="William Velasco is a web developer based in the Philippines, building thoughtful web applications with Laravel, PHP, and MySQL. Explore his work and résumé."
+    />
+    <meta name="theme-color" content="#f8f9f6" />
     <title>William Velasco — Web Developer</title>
-
-    <!-- Lo-Fi Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
-        rel="stylesheet">
-
-    <!-- Icons -->
-    <link rel="stylesheet" href="/css/fontawesome/css/all.min.css">
-    <!-- Styles -->
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/mediaqueries.css">
-</head>
-
-
-<body>
-
-    <!-- Noise Texture Overlay -->
-    <div class="noise-overlay"></div>
-
-    <!-- Navigation -->
-    <header>
-        <nav id="desktop-nav">
-            <div class="logo">
-                <span class="logo-bracket">&lt;</span>wmv<span class="logo-bracket">/&gt;</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#about">about</a></li>
-                <li><a href="#experience">skills</a></li>
-                <li><a href="#projects">projects</a></li>
-                <li><a href="#contact">contact</a></li>
-            </ul>
+    <link rel="icon" href="./images/favicon.svg" type="image/svg+xml" />
+    <script src="./js/theme.js"></script>
+    <link rel="stylesheet" href="./css/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="./js/script.js" defer></script>
+  </head>
+  <body id="top">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="site-shell">
+      <header class="site-header">
+        <a class="wordmark" href="#top" aria-label="William Velasco, home"
+          >wv<span>.</span></a
+        >
+        <nav aria-label="Main navigation">
+          <a href="#about">About</a><a href="#projects">Work</a
+          ><a href="#experience">Toolkit</a><a href="#contact">Contact</a>
         </nav>
-        <nav id="hamburger-nav">
-            <div class="logo">
-                <span class="logo-bracket">&lt;</span>wmv<span class="logo-bracket">/&gt;</span>
+        <button
+          class="icon-button theme-toggle"
+          type="button"
+          aria-label="Switch to dark mode"
+          aria-pressed="false"
+          hidden
+        >
+          <i class="fa-regular fa-moon" aria-hidden="true"></i>
+        </button>
+      </header>
+      <main id="main">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-topline">
+            <span class="eyebrow">DEVELOPER / BUILDER / PROBLEM SOLVER</span
+            ><span class="availability"
+              ><span class="status-dot"></span>Available for work</span
+            >
+          </div>
+          <div class="hero-main">
+            <div>
+              <p class="intro">
+                Hello, I'm William
+                <span class="wave" aria-hidden="true">↗</span>
+              </p>
+              <h1 id="hero-title">
+                Thoughtful code.<br /><em>Useful experiences.</em>
+              </h1>
+              <p class="hero-description">
+                A web developer turning complex problems into simple,<br
+                  class="desktop-break"
+                />
+                practical web experiences. Based in the Philippines.
+              </p>
             </div>
-            <div class="hamburger-menu">
-                <div class="hamburger-icon" onclick="toggleMenu()" tabindex="0" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <div class="menu-links">
-                    <ul>
-                        <li><a href="#about" onclick="toggleMenu()">about</a></li>
-                        <li><a href="#experience" onclick="toggleMenu()">skills</a></li>
-                        <li><a href="#projects" onclick="toggleMenu()">projects</a></li>
-                        <li><a href="#contact" onclick="toggleMenu()">contact</a></li>
-                    </ul>
-                </div>
+            <div class="portrait-wrap">
+              <img
+                class="portrait"
+                src="./images/wmv.png"
+                alt="William Velasco"
+                width="136"
+                height="152"
+                fetchpriority="high"
+              /><span class="portrait-note">the human behind the code</span
+              ><span class="portrait-spark" aria-hidden="true">✳</span>
             </div>
+          </div>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#projects"
+              >Explore my work
+              <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a
+            ><a
+              class="button button-secondary"
+              href="./files/wmv-resume.pdf"
+              download
+              >Download résumé
+              <i class="fa-solid fa-download" aria-hidden="true"></i
+            ></a>
+          </div>
+          <div class="hero-bottom">
+            <span
+              ><i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+              Philippines <span class="separator">·</span>
+              <time id="local-time" aria-label="Current time in the Philippines"
+                >UTC+8</time
+              ></span
+            >
+            <div class="social-links">
+              <a
+                href="https://github.com/williamdoescode"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub (opens in a new tab)"
+                ><i class="fa-brands fa-github" aria-hidden="true"></i></a
+              ><a
+                href="https://www.linkedin.com/in/williamlouhvelasco/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn (opens in a new tab)"
+                ><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a
+              ><a
+                href="mailto:williamvelasco41@gmail.com"
+                aria-label="Email William"
+                ><i class="fa-regular fa-envelope" aria-hidden="true"></i
+              ></a>
             </div>
-        </nav>
-    </header>
-
-    <main>
-        <!-- Hero Section -->
-        <section id="profile">
-            <div class="profile-content reveal">
-                <div class="hero-badge">
-                    <span class="badge-dot"></span>
-                    Available for work
+          </div>
+        </section>
+        <section
+          id="about"
+          class="resume-section reveal"
+          aria-labelledby="about-title"
+        >
+          <div class="section-heading">
+            <span class="section-number">01 /</span>
+            <h2 id="about-title">A little about me</h2>
+          </div>
+          <div class="section-content about-content">
+            <p class="lead">
+              I like making things that
+              <span class="text-accent">make life easier.</span>
+            </p>
+            <p>
+              I'm William Velasco, a web developer with a B.S. in Information
+              Technology and hands-on experience building full-stack
+              applications. My home base is
+              <strong>Laravel, PHP, and MySQL.</strong>
+            </p>
+            <p>
+              From inventory systems to financial dashboards, I enjoy connecting
+              the pieces: thoughtful interfaces, reliable backends, and the APIs
+              that bring it all together. Always learning. Always building.
+            </p>
+            <div class="focus-note">
+              <i class="fa-solid fa-code" aria-hidden="true"></i
+              ><span
+                >Currently focused on clean, maintainable web
+                applications.</span
+              >
+            </div>
+          </div>
+        </section>
+        <section
+          id="projects"
+          class="work-section reveal"
+          aria-labelledby="work-title"
+        >
+          <div class="work-heading">
+            <div class="section-heading">
+              <span class="section-number">02 /</span>
+              <h2 id="work-title">Selected work</h2>
+            </div>
+            <span class="eyebrow">IDEAS INTO WORKING SOFTWARE</span>
+          </div>
+          <div class="projects-grid">
+            <article class="project-card">
+              <a
+                class="project-preview preview-inventory"
+                href="./images/inventory%20project/2.png"
+                data-project="inventory"
+                aria-label="View Inventory System project gallery"
+                ><div class="browser-frame">
+                  <div class="browser-bar" aria-hidden="true">
+                    <span></span><span></span><span></span
+                    ><small>inventory / dashboard</small>
+                  </div>
+                  <img
+                    src="./images/inventory%20project/2.png"
+                    alt="Inventory System dashboard showing users, suppliers, stock alerts, and recent activity"
+                    width="2551"
+                    height="1266"
+                    loading="lazy"
+                  />
                 </div>
-                <p class="section__text__p1">hey, i'm</p>
-                <h1 class="title">William<br><span class="title-highlight">Velasco</span></h1>
-                <p class="section__text__p2">
-                    <span class="typed-prefix">$ </span>Web Developer
+                <span class="preview-action"
+                  ><i
+                    class="fa-solid fa-arrow-up-right-from-square"
+                    aria-hidden="true"
+                  ></i></span
+              ></a>
+              <div class="project-info">
+                <div class="project-title">
+                  <h3>
+                    <a
+                      href="./images/inventory%20project/2.png"
+                      data-project="inventory"
+                      >Inventory System</a
+                    >
+                  </h3>
+                  <span class="project-index">01</span>
+                </div>
+                <p>
+                  Bringing stock, reporting, and everyday operations into one
+                  organized workspace.
                 </p>
-                <p class="hero-desc">
-                    Building clean, functional web experiences with Laravel & PHP.
-                    Turning ideas into working code, one commit at a time.
+                <ul class="tags" aria-label="Technologies">
+                  <li>Laravel</li>
+                  <li>Vue.js</li>
+                  <li>MySQL</li>
+                  <li>Tailwind CSS</li>
+                </ul>
+              </div>
+            </article>
+            <article class="project-card">
+              <a
+                class="project-preview preview-atpeis"
+                href="./images/atpeis%203.png"
+                data-project="atpeis"
+                aria-label="View ATPEIS project gallery"
+                ><div class="browser-frame">
+                  <div class="browser-bar" aria-hidden="true">
+                    <span></span><span></span><span></span
+                    ><small>atpeis / management</small>
+                  </div>
+                  <img
+                    src="./images/atpeis%203.png"
+                    alt="ATPEIS assignment tracking and performance evaluation interface"
+                    width="1920"
+                    height="1080"
+                    loading="lazy"
+                  />
+                </div>
+                <span class="preview-action"
+                  ><i
+                    class="fa-solid fa-arrow-up-right-from-square"
+                    aria-hidden="true"
+                  ></i></span
+              ></a>
+              <div class="project-info">
+                <div class="project-title">
+                  <h3>
+                    <a href="./images/atpeis%203.png" data-project="atpeis"
+                      >ATPEIS</a
+                    >
+                  </h3>
+                  <span class="project-index">02</span>
+                </div>
+                <p>
+                  A clearer way to track assignments and evaluate staff
+                  performance.
                 </p>
-
-                <div class="btn-container">
-                    <button class="btn btn-primary" onclick="window.open('./files/wmv-resume.pdf')">
-                        <i class="fa-solid fa-file-arrow-down"></i> Resume
-                    </button>
-                    <button class="btn btn-secondary" onclick="location.href='./#contact'">
-                        <i class="fa-regular fa-paper-plane"></i> Contact
-                    </button>
-                </div>
-
-                <div id="socials-container">
-                    <a class="social-icon" href="https://www.linkedin.com/in/williamlouhvelasco/" target="_blank"
-                        aria-label="LinkedIn">
-                        <i class="fa-brands fa-linkedin-in"></i>
-                    </a>
-                    <a class="social-icon" href="https://github.com/williamdoescode" target="_blank"
-                        aria-label="GitHub">
-                        <i class="fa-brands fa-github"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Decorative grid + floating cards -->
-            <div class="hero-decoration">
-                <div class="deco-card deco-card--1">
-                    <i class="fa-brands fa-laravel"></i>
-                    <span>Laravel</span>
-                </div>
-                <div class="deco-card deco-card--2">
-                    <i class="fa-brands fa-php"></i>
-                    <span>PHP</span>
-                </div>
-                <div class="deco-card deco-card--3">
-                    <i class="fa-solid fa-database"></i>
-                    <span>MySQL</span>
-                </div>
-                <div class="deco-card deco-card--4">
-                    <i class="fa-brands fa-discord"></i>
-                    <span>Discord Bot</span>
-                </div>
-                <div class="deco-card deco-card--5">
-                    <i class="fa-brands fa-python"></i>
-                    <span>Python</span>
-                </div>
-                <div class="deco-grid"></div>
-            </div>
-
-            <a class="scroll-down" href="#about" aria-label="Scroll down">
-                <i class="fa-solid fa-chevron-down"></i>
-            </a>
+                <ul class="tags" aria-label="Technologies">
+                  <li>PHP</li>
+                  <li>MySQL</li>
+                  <li>Bootstrap</li>
+                </ul>
+              </div>
+            </article>
+          </div>
+          <a
+            class="text-link github-link"
+            href="https://github.com/williamdoescode"
+            target="_blank"
+            rel="noopener noreferrer"
+            >More experiments on GitHub
+            <i
+              class="fa-solid fa-arrow-up-right-from-square"
+              aria-hidden="true"
+            ></i
+          ></a>
         </section>
-
-        <!-- About Section -->
-        <section id="about" class="reveal section-padding">
-            <div class="section-header">
-                <p class="section-label">// about me</p>
-                <h2 class="title">Who I Am</h2>
+        <section
+          id="experience"
+          class="resume-section reveal"
+          aria-labelledby="toolkit-title"
+        >
+          <div class="section-heading">
+            <span class="section-number">03 /</span>
+            <h2 id="toolkit-title">My toolkit</h2>
+            <p>The tools I use to<br />bring ideas to life.</p>
+          </div>
+          <div class="section-content toolkit">
+            <div class="toolkit-row">
+              <h3>
+                <i class="fa-solid fa-laptop-code" aria-hidden="true"></i
+                >Frontend
+              </h3>
+              <ul class="tags">
+                <li>HTML & CSS</li>
+                <li>JavaScript</li>
+                <li>Vue.js</li>
+                <li>React <small>Learning</small></li>
+              </ul>
             </div>
-
-
-            <div class="about-container">
-                <div class="about-text-block">
-                    <p>
-                        I'm a web developer based in the Philippines with hands-on experience in building
-                        full-stack web applications. My stack of choice is <strong>Laravel + PHP + MySQL</strong>,
-                        and I enjoy solving real problems through clean, maintainable code.
-                    </p>
-                    <p>
-                        I hold a <strong>B.S. in Information Technology</strong> and have worked on enterprise-level
-                        systems — from inventory management to financial dashboards. I'm always looking to
-                        learn new things and ship meaningful products.
-                    </p>
-
-                    <div class="about-stats">
-                        <div class="stat-item">
-                            <span class="stat-num">2+</span>
-                            <span class="stat-label">Years Coding</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-num">3+</span>
-                            <span class="stat-label">Projects Built</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-num">5+</span>
-                            <span class="stat-label">APIs Integrated</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="about-cards">
-                    <div class="about-card">
-                        <div class="card-icon">
-                            <i class="fa-solid fa-code"></i>
-                        </div>
-                        <h3>Development</h3>
-                        <p>Full-stack web apps, RESTful APIs, and DB design.</p>
-                    </div>
-                    <div class="about-card">
-                        <div class="card-icon">
-                            <i class="fa-solid fa-server"></i>
-                        </div>
-                        <h3>Deployment</h3>
-                        <p>cPanel, DigitalOcean, GitHub Pages & CI basics.</p>
-                    </div>
-                    <div class="about-card">
-                        <div class="card-icon">
-                            <i class="fa-solid fa-plug"></i>
-                        </div>
-                        <h3>Integrations</h3>
-                        <p>Xero, Stripe, Klaviyo and other third-party APIs.</p>
-                    </div>
-                </div>
+            <div class="toolkit-row">
+              <h3>
+                <i class="fa-solid fa-terminal" aria-hidden="true"></i>Backend
+              </h3>
+              <ul class="tags">
+                <li>PHP</li>
+                <li>Laravel</li>
+                <li>Python</li>
+                <li>MySQL</li>
+                <li>MS SQL</li>
+              </ul>
             </div>
+            <div class="toolkit-row">
+              <h3>
+                <i class="fa-solid fa-plug" aria-hidden="true"></i>APIs &
+                integrations
+              </h3>
+              <ul class="tags">
+                <li>Xero</li>
+                <li>Stripe</li>
+                <li>Klaviyo</li>
+                <li>Ajax</li>
+                <li>Discord bots</li>
+              </ul>
+            </div>
+            <div class="toolkit-row">
+              <h3>
+                <i class="fa-solid fa-layer-group" aria-hidden="true"></i>Tools
+                & deployment
+              </h3>
+              <ul class="tags">
+                <li>Git & GitHub</li>
+                <li>cPanel</li>
+                <li>DigitalOcean</li>
+                <li>GitHub Pages</li>
+              </ul>
+            </div>
+          </div>
         </section>
-
-        <!-- Experience / Skills Section -->
-        <section id="experience" class="reveal section-padding">
-            <div class="section-header">
-                <p class="section-label">// skills</p>
-                <h2 class="title">What I Work With</h2>
+        <section
+          class="resume-section education-section reveal"
+          aria-labelledby="education-title"
+        >
+          <div class="section-heading">
+            <span class="section-number">04 /</span>
+            <h2 id="education-title">Education</h2>
+          </div>
+          <div class="section-content education">
+            <span class="education-icon"
+              ><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i
+            ></span>
+            <div>
+              <h3>B.S. in Information Technology</h3>
+              <p>A foundation in technology. A curiosity that keeps growing.</p>
             </div>
-
-
-            <div class="experience-grid">
-                <!-- Frontend -->
-                <div class="experience-card">
-                    <div class="exp-card-header">
-                        <i class="fa-solid fa-laptop-code"></i>
-                        <h3>Front-End</h3>
-                    </div>
-                    <div class="skills-list">
-                        <article class="skill-item">
-                            <span class="skill-tag">HTML</span>
-                            <div class="skill-bar">
-                                <div class="skill-fill" style="--level:95%"></div>
-                            </div>
-                            <span class="skill-level">Advanced</span>
-                        </article>
-                        <article class="skill-item">
-                            <span class="skill-tag">CSS</span>
-                            <div class="skill-bar">
-                                <div class="skill-fill" style="--level:90%"></div>
-                            </div>
-                            <span class="skill-level">Advanced</span>
-                        </article>
-                        <article class="skill-item">
-                            <span class="skill-tag">JavaScript</span>
-                            <div class="skill-bar">
-                                <div class="skill-fill" style="--level:85%"></div>
-                            </div>
-                            <span class="skill-level">Advanced</span>
-                        </article>
-                        <article class="skill-item">
-                            <span class="skill-tag">Vue JS</span>
-                            <div class="skill-bar">
-                                <div class="skill-fill" style="--level:60%"></div>
-                            </div>
-                            <span class="skill-level">Intermediate</span>
-                        </article>
-                        <article class="skill-item">
-                            <span class="skill-tag">React JS</span>
-                            <div class="skill-bar">
-                                <div class="skill-fill" style="--level:30%"></div>
-                            </div>
-                            <span class="skill-level">Entry Level</span>
-                        </article>
-                    </div>
-                </div>
-
-                <!-- Backend -->
-                <div class="experience-card">
-                    <div class="exp-card-header">
-                        <i class="fa-solid fa-terminal"></i>
-                        <h3>Back-End</h3>
-                    </div>
-                    <div class="skills-list">
-                        <article class="skill-item">
-                            <span class="skill-tag">PHP</span>
-                            <div class="skill-bar">
-                                <div class="skill-fill" style="--level:90%"></div>
-                            </div>
-                            <span class="skill-level">Advanced</span>
-                        </article>
-                        <article class="skill-item">
-                            <span class="skill-tag">Laravel</span>
-                            <div class="skill-bar">
-                                <div class="skill-fill" style="--level:90%"></div>
-                            </div>
-                            <span class="skill-level">Advanced</span>
-                        </article>
-                        <article class="skill-item">
-                            <span class="skill-tag">MySQL / MS SQL</span>
-                            <div class="skill-bar">
-                                <div class="skill-fill" style="--level:85%"></div>
-                            </div>
-                            <span class="skill-level">Advanced</span>
-                        </article>
-                        <article class="skill-item">
-                            <span class="skill-tag">Python</span>
-                            <div class="skill-bar">
-                                <div class="skill-fill" style="--level:60%"></div>
-                            </div>
-                            <span class="skill-level">Intermediate</span>
-                        </article>
-                    </div>
-                </div>
-
-                <!-- Tools -->
-                <div class="experience-card">
-                    <div class="exp-card-header">
-                        <i class="fa-solid fa-wrench"></i>
-                        <h3>Tools & APIs</h3>
-                    </div>
-                    <ul class="tools-list">
-                        <li><i class="fa-solid fa-server"></i> cPanel</li>
-                        <li><i class="fa-brands fa-digital-ocean"></i> DigitalOcean</li>
-                        <li><i class="fa-solid fa-link"></i> Xero API</li>
-                        <li><i class="fa-brands fa-stripe"></i> Stripe API</li>
-                        <li><i class="fa-solid fa-envelope-open-text"></i> Klaviyo API</li>
-                        <li><i class="fa-solid fa-bolt"></i> Ajax</li>
-                        <li><i class="fa-brands fa-discord"></i> Discord Bots</li>
-                        <li><i class="fa-brands fa-git-alt"></i> Git / GitHub</li>
-                    </ul>
-                </div>
-            </div>
+          </div>
         </section>
-
-        <!-- Projects Section -->
-        <section id="projects" class="reveal section-padding">
-            <div class="section-header">
-                <p class="section-label">// projects</p>
-                <h2 class="title">Recent Work</h2>
-            </div>
-
-
-            <div class="projects-grid">
-                <!-- Project 1 -->
-                <div class="project-card" data-project="atpeis" data-title="ATPEIS"
-                    data-desc="Assignment Tracking and Performance Evaluation Information System — a comprehensive HR and tracking platform designed for detailed staff performance monitoring."
-                    data-tags="PHP, MySQL, Laravel"
-                    data-images="/images/atpeis 1.png,/images/atpeis 2.png,/images/atpeis 3.png,/images/atpeis 4.png,/images/atpeis 5.png">
-                    <div class="project-gallery-wrapper">
-                        <div class="project-gallery">
-                            <img src="/images/atpeis 1.png" alt="ATPEIS Screenshot 1">
-                            <img src="/images/atpeis 2.png" alt="ATPEIS Screenshot 2" loading="lazy">
-                        </div>
-                        <div class="gallery-fade"></div>
-                        <div class="scroll-hint">
-                            <i class="fa-solid fa-expand"></i> Click to view
-                        </div>
-                    </div>
-                    <div class="project-info">
-                        <h3>ATPEIS</h3>
-                        <p>Assignment Tracking and Performance Evaluation Information System.</p>
-                        <div class="project-tags">
-                            <span>PHP</span>
-                            <span>MySQL</span>
-                            <span>Bootstrap</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project 2 -->
-                <div class="project-card" data-project="inventory" data-title="Inventory System"
-                    data-desc="A comprehensive inventory management system with custom reporting, stock alerts, and multi-user support, built to handle complex warehouse logic."
-                    data-tags="Laravel 10, MySQL Workbench"
-                    data-images="/images/inventory project/2.png,/images/inventory project/3.png,/images/inventory project/4.png,/images/inventory project/5.png">
-                    <div class="project-gallery-wrapper">
-                        <div class="project-gallery">
-                            <img src="/images/inventory project/2.png" alt="Inventory Screenshot 1">
-                            <img src="/images/inventory project/3.png" alt="Inventory Screenshot 2" loading="lazy">
-                            <img src="/images/inventory project/4.png" alt="Inventory Screenshot 2" loading="lazy">
-                            <img src="/images/inventory project/5.png" alt="Inventory Screenshot 2" loading="lazy">
-                        </div>
-                        <div class="gallery-fade"></div>
-                        <div class="scroll-hint">
-                            <i class="fa-solid fa-expand"></i> Click to view
-                        </div>
-                    </div>
-                    <div class="project-info">
-                        <h3>Inventory System</h3>
-                        <p>A comprehensive inventory management system with custom features.</p>
-                        <div class="project-tags">
-                            <span>Laravel 11</span>
-                            <span>MySQL Workbench</span>
-                            <span>Tailwind CSS</span>
-                            <span>Vue.js</span>
-                            <span>Inertia.js</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact" class="reveal section-padding">
-            <div class="section-header">
-                <p class="section-label">// contact</p>
-                <h2 class="title">Let's Talk</h2>
-            </div>
-
-            <div class="contact-wrapper">
-                <p class="contact-intro">
-                    Have a project in mind or want to collaborate? Drop me a message —
-                    I usually reply within a day.
-                </p>
-                <div class="contact-card">
-                    <div class="contact-info-item">
-                        <div class="icon-circle">
-                            <i class="fa-regular fa-envelope"></i>
-                        </div>
-                        <div class="contact-text">
-                            <h3>Email</h3>
-                            <a href="mailto:williamvelasco41@gmail.com">williamvelasco41@gmail.com</a>
-                        </div>
-                    </div>
-
-                    <div class="contact-info-item">
-                        <div class="icon-circle linkedin-blue">
-                            <i class="fa-brands fa-linkedin-in"></i>
-                        </div>
-                        <div class="contact-text">
-                            <h3>LinkedIn</h3>
-                            <a href="https://www.linkedin.com/in/williamlouhvelasco/" target="_blank">Connect with
-                                me</a>
-                        </div>
-                    </div>
-
-                    <div class="contact-info-item">
-                        <div class="icon-circle github-dark">
-                            <i class="fa-brands fa-github"></i>
-                        </div>
-                        <div class="contact-text">
-                            <h3>GitHub</h3>
-                            <a href="https://github.com/williamdoescode" target="_blank">@williamdoescode</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-
-    <footer>
-        <div class="footer-inner">
-            <span class="footer-logo"><span class="logo-bracket">&lt;</span>wmv<span
-                    class="logo-bracket">/&gt;</span></span>
-            <p>Crafted with <i class="fa-solid fa-heart footer-heart"></i> by William Velasco &mdash; &copy; 2026</p>
-        </div>
-    </footer>
-
-    <!-- Project Modal -->
-    <div id="project-modal" class="modal">
-        <div class="modal-overlay" onclick="closeModal()"></div>
-        <div class="modal-container">
-            <button class="modal-close" onclick="closeModal()" aria-label="Close Modal">
-                <i class="fa-solid fa-xmark"></i>
+        <section
+          id="contact"
+          class="contact-section reveal"
+          aria-labelledby="contact-title"
+        >
+          <div class="contact-kicker">
+            <span class="status-dot"></span>OPEN TO NEW OPPORTUNITIES
+          </div>
+          <h2 id="contact-title">
+            Good things start<br />with <em>a conversation.</em>
+          </h2>
+          <p>
+            Have a project in mind, a role to fill, or just want to say
+            hello?<br class="desktop-break" />
+            I'd love to hear from you.
+          </p>
+          <div class="contact-actions">
+            <a
+              class="button button-primary"
+              href="mailto:williamvelasco41@gmail.com"
+              >Let's talk
+              <i
+                class="fa-solid fa-arrow-up-right-from-square"
+                aria-hidden="true"
+              ></i></a
+            ><button
+              class="button button-secondary"
+              id="copy-email"
+              type="button"
+              hidden
+            >
+              <i class="fa-regular fa-copy" aria-hidden="true"></i> Copy email
             </button>
-
-            <div class="modal-content">
-                <div class="modal-gallery-section">
-                    <div class="modal-carousel">
-                        <div id="modal-images" class="modal-images">
-                            <!-- Images will be injected here -->
-                        </div>
-                        <button class="carousel-nav prev" onclick="changeSlide(-1)" aria-label="Previous slide">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <button class="carousel-nav next" onclick="changeSlide(1)" aria-label="Next slide">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                    </div>
-                    <div class="carousel-dots" id="carousel-dots">
-                        <!-- Dots will be injected here -->
-                    </div>
-                </div>
-
-                <div class="modal-info-section">
-                    <div class="modal-header">
-                        <p class="section-label" id="modal-project-label">// project case</p>
-                        <h2 class="title" id="modal-title">Project Title</h2>
-                    </div>
-                    <div id="modal-tags" class="project-tags modal-tags">
-                        <!-- Tags will be injected here -->
-                    </div>
-                    <div class="modal-body">
-                        <p id="modal-desc">Project description goes here...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+          </div>
+          <a class="email-link" href="mailto:williamvelasco41@gmail.com"
+            >williamvelasco41@gmail.com</a
+          ><span class="contact-decoration" aria-hidden="true">✳</span>
+        </section>
+        <p
+          class="sr-only"
+          id="announcement"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </main>
+      <footer class="site-footer">
+        <p>
+          © <span id="year">2026</span> William Velasco
+          <span class="separator">/</span> Made with care.
+        </p>
+        <a href="#top"
+          >Back to top <i class="fa-solid fa-arrow-up" aria-hidden="true"></i
+        ></a>
+      </footer>
     </div>
-
-    <script src="js/script.js"></script>
-</body>
-
-
+    <dialog
+      id="project-dialog"
+      aria-labelledby="dialog-title"
+      aria-describedby="dialog-description"
+    >
+      <div class="dialog-header">
+        <span class="eyebrow">PROJECT DETAILS</span
+        ><button
+          class="icon-button"
+          id="close-dialog"
+          type="button"
+          aria-label="Close project gallery"
+          autofocus
+        >
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <h2 id="dialog-title"></h2>
+        <p id="dialog-description"></p>
+        <ul
+          class="tags"
+          id="dialog-tags"
+          aria-label="Project technologies"
+        ></ul>
+      </div>
+      <div class="gallery-image-wrap">
+        <img id="gallery-image" alt="" width="1600" height="900" />
+      </div>
+      <div class="gallery-controls">
+        <button
+          class="icon-button"
+          id="previous-image"
+          type="button"
+          aria-label="Previous screenshot"
+        >
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        </button>
+        <p id="gallery-count" aria-live="polite"></p>
+        <button
+          class="icon-button"
+          id="next-image"
+          type="button"
+          aria-label="Next screenshot"
+        >
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </dialog>
+  </body>
 </html>
