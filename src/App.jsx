@@ -1,4 +1,5 @@
-﻿import { useEffect, useRef, useState } from "react";
+﻿import Intro from "./Intro.jsx";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   asset,
   email,
@@ -422,6 +423,10 @@ function Contact() {
   );
 }
 export default function App() {
+  const [introOpen, setIntroOpen] = useState(
+    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const finishIntro = useCallback(() => setIntroOpen(false), []);
   const [theme, setTheme] = useState(
     () => document.documentElement.dataset.theme || "dark",
   );
@@ -438,7 +443,7 @@ export default function App() {
     }
   }, [theme]);
   useEffect(() => {
-    if (!("IntersectionObserver" in window)) return;
+    if (introOpen || !("IntersectionObserver" in window)) return;
     const observer = new IntersectionObserver(
       (entries) =>
         entries.forEach((entry) => {
@@ -453,7 +458,7 @@ export default function App() {
       .querySelectorAll(".reveal")
       .forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, []);
+  }, [introOpen]);
   function closeProject() {
     setProject(null);
     requestAnimationFrame(() =>
@@ -462,10 +467,10 @@ export default function App() {
   }
   return (
     <>
-      <a className="skip-link" href="#main">
+      <a className="skip-link" href="#main" inert={introOpen}>
         Skip to content
       </a>
-      <div className="site-shell">
+      <div className="site-shell" inert={introOpen}>
         <Header
           theme={theme}
           onToggle={() =>
@@ -544,6 +549,7 @@ export default function App() {
           </a>
         </footer>
       </div>
+      {introOpen && <Intro onFinish={finishIntro} />}
       {project && (
         <ProjectGallery
           key={project.id}
