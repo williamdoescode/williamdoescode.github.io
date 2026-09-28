@@ -25,6 +25,7 @@
   box-sizing: border-box;
 }
 html {
+  scrollbar-gutter: stable;
   scroll-behavior: smooth;
   scroll-padding-top: 28px;
 }
@@ -678,14 +679,7 @@ dialog[open] {
     transform: translateY(0);
   }
 }
-@media (prefers-reduced-motion: no-preference) {
-  .profile-card {
-    animation: enter 0.6s ease both;
-  }
-  .reveal.is-visible {
-    animation: enter 0.5s ease both;
-  }
-}
+
 @media (max-width: 1000px) {
   .profile-card {
     grid-template-columns: 1.3fr 1fr;

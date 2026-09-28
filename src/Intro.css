@@ -2,9 +2,6 @@
 body.intro-running {
   overflow: hidden;
 }
-.intro-running .profile-card {
-  animation-play-state: paused;
-}
 .intro-overlay {
   position: fixed;
   inset: 0;

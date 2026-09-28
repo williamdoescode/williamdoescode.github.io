@@ -342,7 +342,7 @@ function Experience() {
   return (
     <section
       id="experience"
-      className="resume-section experience-section reveal"
+      className="resume-section experience-section"
       aria-labelledby="experience-title"
     >
       <SectionHeading title="Professional Experience" id="experience-title" />
@@ -378,7 +378,7 @@ function Toolkit() {
   return (
     <section
       id="toolkit"
-      className="resume-section reveal"
+      className="resume-section"
       aria-labelledby="toolkit-title"
     >
       <SectionHeading title="My toolkit" id="toolkit-title">
@@ -421,7 +421,7 @@ function Contact() {
   return (
     <section
       id="contact"
-      className="contact-section reveal"
+      className="contact-section"
       aria-labelledby="contact-title"
     >
       <div className="contact-copy">
@@ -476,23 +476,6 @@ export default function App() {
       /* Theme still works for this visit. */
     }
   }, [theme]);
-  useEffect(() => {
-    if (introOpen || !("IntersectionObserver" in window)) return;
-    const observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target);
-          }
-        }),
-      { threshold: 0.08 },
-    );
-    document
-      .querySelectorAll(".reveal")
-      .forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
-  }, [introOpen]);
   function closeProject() {
     setProject(null);
     requestAnimationFrame(() =>
@@ -515,7 +498,7 @@ export default function App() {
           <Profile />
           <section
             id="projects"
-            className="work-section reveal"
+            className="work-section"
             aria-labelledby="work-title"
           >
             <div className="work-heading">
@@ -547,7 +530,7 @@ export default function App() {
           <Experience />
           <Toolkit />
           <section
-            className="resume-section education-section reveal"
+            className="resume-section education-section"
             aria-labelledby="education-title"
           >
             <SectionHeading title="Education" id="education-title" />
