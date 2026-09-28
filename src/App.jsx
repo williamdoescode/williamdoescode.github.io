@@ -12,10 +12,9 @@ import {
 function Icon({ name, ...props }) {
   return <i className={`fa-${name}`} aria-hidden="true" {...props} />;
 }
-function SectionHeading({ number, title, id, children }) {
+function SectionHeading({ title, id, children }) {
   return (
     <div className="section-heading">
-      <span className="eyebrow section-number">{number} /</span>
       <h2 id={id}>{title}</h2>
       {children}
     </div>
@@ -58,8 +57,9 @@ function Header({ theme, onToggle }) {
         wv<span> /</span>
       </a>
       <nav aria-label="Main navigation">
-        <a href="#projects">Work</a>
-        <a href="#experience">Toolkit</a>
+        <a href="#projects">Projects</a>
+        <a href="#experience">Experience</a>
+        <a href="#toolkit">Toolkit</a>
         <a href="#contact">Contact</a>
       </nav>
       <button
@@ -113,7 +113,7 @@ function Profile() {
       </div>
       <div className="profile-actions">
         <a className="button button-primary" href="#projects">
-          Selected work
+          Projects
           <Icon name="solid fa-arrow-right" />
         </a>
         <a
@@ -141,7 +141,7 @@ function Profile() {
     </section>
   );
 }
-function ProjectCard({ project, index, onOpen }) {
+function ProjectCard({ project, onOpen }) {
   const open = (event) => {
     if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)
       return;
@@ -157,9 +157,7 @@ function ProjectCard({ project, index, onOpen }) {
   return (
     <article className="project-card">
       <div className="project-info">
-        <span className="eyebrow">
-          0{index + 1} / {project.category}
-        </span>
+        <span className="eyebrow">{project.category}</span>
         <h3>
           <a href={project.images[0]} onClick={open}>
             {project.title}
@@ -340,14 +338,50 @@ function ToolIcons({ tools }) {
     </ul>
   );
 }
-function Toolkit() {
+function Experience() {
   return (
     <section
       id="experience"
+      className="resume-section experience-section reveal"
+      aria-labelledby="experience-title"
+    >
+      <SectionHeading title="Professional Experience" id="experience-title" />
+      <div className="experience-list">
+        <article className="experience-entry">
+          <div className="experience-heading">
+            <h3>EBOS PH</h3>
+            <span>Remote · Full-time</span>
+          </div>
+          <p className="experience-role">Full Stack Developer</p>
+          <p className="experience-summary">
+            Built financial and accounting modules, optimized MySQL performance,
+            and improved team workflows with GitLab.
+          </p>
+        </article>
+        <article className="experience-entry">
+          <div className="experience-heading">
+            <h3>Media Conquest</h3>
+            <span>Remote · Part-time</span>
+          </div>
+          <p className="experience-role">Full Stack Developer</p>
+          <p className="experience-summary">
+            Refactored legacy APIs and optimized PHP data fetching to improve
+            reliability and responsiveness.
+          </p>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function Toolkit() {
+  return (
+    <section
+      id="toolkit"
       className="resume-section reveal"
       aria-labelledby="toolkit-title"
     >
-      <SectionHeading number="02" title="My toolkit" id="toolkit-title">
+      <SectionHeading title="My toolkit" id="toolkit-title">
         <p>
           A few familiar tools.
           <br />
@@ -485,19 +519,14 @@ export default function App() {
             aria-labelledby="work-title"
           >
             <div className="work-heading">
-              <SectionHeading
-                number="01"
-                title="Selected work"
-                id="work-title"
-              />
+              <SectionHeading title="Projects" id="work-title" />
               <span className="eyebrow">IDEAS INTO WORKING SOFTWARE</span>
             </div>
             <div className="projects-grid">
-              {projects.map((item, index) => (
+              {projects.map((item) => (
                 <ProjectCard
                   key={item.id}
                   project={item}
-                  index={index}
                   onOpen={(selection, element) => {
                     trigger.current = element;
                     setProject(selection);
@@ -515,16 +544,13 @@ export default function App() {
               <Icon name="solid fa-arrow-up-right-from-square" />
             </a>
           </section>
+          <Experience />
           <Toolkit />
           <section
             className="resume-section education-section reveal"
             aria-labelledby="education-title"
           >
-            <SectionHeading
-              number="03"
-              title="Education"
-              id="education-title"
-            />
+            <SectionHeading title="Education" id="education-title" />
             <div className="education">
               <span className="education-icon">
                 <Icon name="solid fa-graduation-cap" />

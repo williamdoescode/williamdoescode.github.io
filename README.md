@@ -22,6 +22,9 @@ React needs a development server or production build; opening `index.html` direc
 
 ## Design and interaction
 
+- Every page visit starts with a brief WV split animation. Skip intro or Escape reveals the content immediately; reduced-motion visitors go straight to the page.
+- Professional Experience summarizes the EBOS PH and Media Conquest roles.
+
 - The default dark theme uses `#0b090a` for the page background and `#fffcf2` for primary text. Light mode reverses that pairing. A visitor's saved theme is preserved.
 - The profile card groups the portrait, name, introduction, social links, and main actions in a compact layout that stacks on mobile.
 - Toolkit icons reveal names on hover, keyboard focus, or tap. Each has an accessible name. Escape dismisses a focused label.
