@@ -42,6 +42,18 @@ React needs a development server or production build; opening `index.html` direc
 
 ## GitHub Pages
 
-In **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions**. The included workflow builds and deploys `dist` when changes are pushed to `main`, or when triggered manually. Source files are not the deployable site.
+Live site: https://williamdoescode.github.io/
 
-Vite uses a relative base (`./`), and public asset paths use `import.meta.env.BASE_URL`, so the production build supports both the account site and project subdirectories. See [Vite's deployment guide](https://vite.dev/guide/static-deploy.html#github-pages).
+Pages is configured to **Deploy from a branch → gh-pages → / (root)**. The `gh-pages` branch contains the built site; `main` contains the React source.
+
+To publish an update using your existing GitHub Git credentials:
+
+```sh
+npm run deploy
+```
+
+This builds the app locally, clones the publishing branch into a temporary directory, commits the production files, and pushes without force. The source checkout stays on its current branch. Commit and push your source changes separately to keep `main` up to date.
+
+The Actions deployment workflow is currently manual-only because GitHub blocked the custom workflow with an account billing lock. Branch-based Pages publishing uses the locally generated build. If you later restore Actions deployment, resolve the account issue, set Pages Source to GitHub Actions, and run the workflow manually.
+
+The relative Vite base supports both the account site and project subdirectories.
