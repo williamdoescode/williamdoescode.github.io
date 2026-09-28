@@ -1,32 +1,47 @@
-﻿# William Velasco — Portfolio
+﻿# William Velasco — React Portfolio
 
-A responsive, centered portfolio and résumé built with semantic HTML, CSS, and vanilla JavaScript. It runs directly on GitHub Pages without a build step or package installation. Font Awesome is served locally from the existing assets; there are no runtime CDN dependencies.
+A centered portfolio built with React and Vite, with a compact 820px centered container, split project rows, project galleries, and an icon-based toolkit.
 
-## Preview
+## Run locally
 
-Open `index.html` in a browser, or serve the repository with your preferred static server. For example, if Python is installed:
+Use Node.js 22.12+ (Node 24 recommended).
 
 ```sh
-python -m http.server 8000
+npm ci
+npm run dev
 ```
 
-Visit `http://localhost:8000`. Clipboard support requires localhost or HTTPS; an email link is always available.
+Open the local URL printed by Vite. To test the production site:
 
-## Publish on GitHub Pages
+```sh
+npm run build
+npm run preview
+```
 
-Push the files to your publishing branch. In the repository's **Settings → Pages**, choose **Deploy from a branch**, select that branch and **/ (root)**, and save. All local assets use relative paths, so the site also works under a project subdirectory. No backend or client-side router is needed.
+React needs a development server or production build; opening `index.html` directly will not run the app.
 
-## Edit the portfolio
+## Design and interaction
 
-- `index.html`: biography, project previews, skills, education, and contact links.
-- `css/style.css`: shared design tokens, both themes, component styles, responsive layouts, reduced motion, and print styles.
-- `js/theme.js`: applies the saved or system theme before the page paints.
-- `js/script.js`: theme controls, local time, section highlighting, copy email, and project gallery. Update the `projects` object when changing gallery details or screenshots.
-- `images/`: portrait, favicon, and existing project screenshots.
-- `files/wmv-resume.pdf`: downloadable résumé.
+- The default dark theme uses `#0b090a` for the page background and `#fffcf2` for primary text. Light mode reverses that pairing. A visitor's saved theme is preserved.
+- The profile card groups the portrait, name, introduction, social links, and main actions in a compact layout that stacks on mobile.
+- Toolkit icons reveal names on hover, keyboard focus, or tap. Each has an accessible name. Escape dismisses a focused label.
+- Project galleries support arrow keys, Escape, focus containment, and returning focus to the trigger.
+- Animations respect reduced-motion settings. Printed pages include toolkit labels.
+- Icons, images, and the résumé are served locally.
 
-Light and dark themes follow the system preference until a visitor chooses a theme. That choice is saved when browser storage is available. The native project dialog supports Escape, arrow-key navigation, focus containment, and returning focus to the original link. Core content, navigation, résumé, and screenshot links remain available without JavaScript.
+## Project structure
 
-## Verification
+- `src/App.jsx`: React components and interaction state.
+- `src/data.js`: projects, screenshot paths, toolkit entries, contact details, and social links.
+- `src/styles.css`: theme tokens, component styles, responsive layouts, and print styles.
+- `src/main.jsx`: React entry point.
+- `public/images/`: portrait, favicon, and project screenshots.
+- `public/files/wmv-resume.pdf`: downloadable résumé.
+- `public/icons/fontawesome/`: locally hosted icon assets.
+- `.github/workflows/deploy.yml`: production build and GitHub Pages deployment.
 
-The redesign was checked in headless Chrome at widths from 320 to 1440 pixels, including theme persistence, system theme changes, project galleries, screenshot loading, keyboard and focus behavior, clipboard, résumé download, reduced motion, no-JavaScript content, and serving from a subdirectory.
+## GitHub Pages
+
+In **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions**. The included workflow builds and deploys `dist` when changes are pushed to `main`, or when triggered manually. Source files are not the deployable site.
+
+Vite uses a relative base (`./`), and public asset paths use `import.meta.env.BASE_URL`, so the production build supports both the account site and project subdirectories. See [Vite's deployment guide](https://vite.dev/guide/static-deploy.html#github-pages).
