@@ -2,5 +2,6 @@
 
 export default defineConfig({
   base: "./",
+  build: { outDir: "docs" },
   esbuild: { jsx: "automatic" },
 });

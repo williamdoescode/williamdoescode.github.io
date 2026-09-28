@@ -41,22 +41,26 @@ React needs a development server or production build; opening `index.html` direc
 - `public/images/`: portrait, favicon, and project screenshots.
 - `public/files/wmv-resume.pdf`: downloadable résumé.
 - `public/icons/fontawesome/`: locally hosted icon assets.
-- `.github/workflows/deploy.yml`: production build and GitHub Pages deployment.
+- `docs/`: committed production build served by GitHub Pages.
+- `public/.nojekyll`: disables Jekyll processing for the static build.
 
 ## GitHub Pages
 
 Live site: https://williamdoescode.github.io/
 
-Pages is configured to **Deploy from a branch → gh-pages → / (root)**. The `gh-pages` branch contains the built site; `main` contains the React source.
+Both the React source and published files live on **main**. Pages must stay configured to **Deploy from a branch → main → /docs**. The root contains development source; the `docs/` folder contains the production site.
 
-To publish an update using your existing GitHub Git credentials:
+### Prepare an update
 
 ```sh
-npm run deploy
+npm run build
+npm run preview
 ```
 
-This builds the app locally, clones the publishing branch into a temporary directory, commits the production files, and pushes without force. The source checkout stays on its current branch. Commit and push your source changes separately to keep `main` up to date.
+The build regenerates `docs/`, including assets and `.nojekyll`. Review the result, then commit and push the source changes **and** the updated `docs/` directory when you choose to publish. GitHub Pages publishes that directory after the push.
 
-The Actions deployment workflow is currently manual-only because GitHub blocked the custom workflow with an account billing lock. Branch-based Pages publishing uses the locally generated build. If you later restore Actions deployment, resolve the account issue, set Pages Source to GitHub Actions, and run the workflow manually.
+`npm run deploy` is an alias for the local build only. It never commits, pushes, or changes repository settings. A separate publishing branch or custom Actions workflow is no longer required.
 
-The relative Vite base supports both the account site and project subdirectories.
+Do not edit generated files in `docs/` directly; edit `src/` or `public/` and rebuild. The relative Vite base supports both account sites and project subdirectories.
+
+See [GitHub's publishing-source documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
