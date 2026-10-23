@@ -64,3 +64,22 @@ The build regenerates `docs/`, including assets and `.nojekyll`. Review the resu
 Do not edit generated files in `docs/` directly; edit `src/` or `public/` and rebuild. The relative Vite base supports both account sites and project subdirectories.
 
 See [GitHub's publishing-source documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
+
+## cPanel hosting
+
+The same `docs/` build runs on any cPanel (Apache) host. No Node.js app or server setup is needed. `public/.htaccess` is copied into the build. It sets `index.html` as the index, sends the correct MIME types for module scripts and fonts, enables compression, and caches hashed bundles long-term while always revalidating the page.
+
+### Option A: Git Version Control (recommended)
+
+1. In cPanel, open **Git™ Version Control → Create** and clone this repository (outside `public_html`, e.g. `~/repositories/portfolio`).
+2. After pushing a new build, open **Manage → Pull or Deploy**, then **Update from Remote** and **Deploy HEAD Commit**.
+
+`.cpanel.yml` copies `docs/` into `~/public_html/`. To deploy to an addon domain or subfolder, change `DEPLOYPATH` in that file. Deploys add and overwrite files but never delete. To remove old `assets/index-*.js` and `.css` bundles, use File Manager.
+
+### Option B: File Manager upload
+
+1. Run `npm run build`.
+2. Zip the **contents** of `docs/`, including the hidden `.htaccess`, and upload the zip to `public_html` (or a subfolder).
+3. Extract it there. In File Manager, enable **Settings → Show Hidden Files** to confirm `.htaccess` is present.
+
+Filenames on cPanel are case-sensitive, unlike on Windows, so keep image references in `src/data.js` matching the files exactly. To force HTTPS, use **Domains → Force HTTPS Redirect** in cPanel.

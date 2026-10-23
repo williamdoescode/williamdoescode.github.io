@@ -1,0 +1,9 @@
+---
+# cPanel Git Version Control runs these tasks on "Deploy HEAD Commit".
+# It copies the committed production build in docs/ into the web root.
+# Change DEPLOYPATH to deploy to an addon domain or subfolder instead.
+deployment:
+  tasks:
+    - export DEPLOYPATH=$HOME/public_html/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R docs/. $DEPLOYPATH
