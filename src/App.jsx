@@ -1,5 +1,10 @@
 ﻿import Intro from "./Intro.jsx";
+import Icon from "./Icon.jsx";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { MusicProvider } from "./music/MusicProvider.jsx";
+import MusicPanel from "./music/MusicPanel.jsx";
+import LyricsBackdrop from "./music/LyricsBackdrop.jsx";
+import MiniPlayer from "./music/MiniPlayer.jsx";
 import {
   asset,
   email,
@@ -9,9 +14,6 @@ import {
   projectTools,
 } from "./data.js";
 
-function Icon({ name, ...props }) {
-  return <i className={`fa-${name}`} aria-hidden="true" {...props} />;
-}
 function SectionHeading({ title, id, children }) {
   return (
     <div className="section-heading">
@@ -60,6 +62,7 @@ function Header({ theme, onToggle }) {
         <a href="#projects">Projects</a>
         <a href="#experience">Experience</a>
         <a href="#toolkit">Toolkit</a>
+        <a href="#entertainment">Music</a>
         <a href="#contact">Contact</a>
       </nav>
       <button
@@ -93,9 +96,7 @@ function Profile() {
         <div className="profile-name">
           <span className="eyebrow">FULL-STACK WEB DEVELOPER</span>
           <h1 id="profile-name">
-            William
-            <br />
-            Velasco<span>.</span>
+            William<span>.</span>
           </h1>
           <p className="location">
             <Icon name="solid fa-location-dot" />
@@ -388,7 +389,7 @@ function Toolkit() {
           Plenty of possibilities.
         </p>
         <p className="toolkit-hint">
-          Hover, focus, or tap
+          Hover, focus, or tap{" "}
           <br />
           to explore.
         </p>
@@ -483,10 +484,11 @@ export default function App() {
     );
   }
   return (
-    <>
+    <MusicProvider>
       <a className="skip-link" href="#main" inert={introOpen}>
         Skip to content
       </a>
+      <LyricsBackdrop />
       <div className="site-shell" inert={introOpen}>
         <Header
           theme={theme}
@@ -546,6 +548,23 @@ export default function App() {
               </div>
             </div>
           </section>
+          <section
+            id="entertainment"
+            className="resume-section entertainment-section"
+            aria-labelledby="entertainment-title"
+          >
+            <SectionHeading title="Entertainment" id="entertainment-title">
+              <p>
+                Press play.
+                <br />
+                The page sings along.
+              </p>
+              <p className="toolkit-hint">
+                Lyrics glow beside the page in the album's colors.
+              </p>
+            </SectionHeading>
+            <MusicPanel />
+          </section>
           <Contact />
         </main>
         <footer className="site-footer">
@@ -558,6 +577,7 @@ export default function App() {
           </a>
         </footer>
       </div>
+      <MiniPlayer />
       {introOpen && <Intro onFinish={finishIntro} />}
       {project && (
         <ProjectGallery
@@ -566,6 +586,6 @@ export default function App() {
           onClose={closeProject}
         />
       )}
-    </>
+    </MusicProvider>
   );
 }

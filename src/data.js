@@ -79,6 +79,47 @@ export const toolkit = [
   },
 ];
 
+// Entertainment playlist. Each track needs a title + artist (used to find
+// synced lyrics on LRCLIB) and a cover (its colors tint the page).
+// Sources, pick one per track:
+//   spotify: "spotify:track:<id>"  plays through Spotify's embed. Copy the id
+//            from Spotify → Share → Copy Song Link.
+//   audio:   "music/song.mp3"      a file in public/music/. Gives everyone the
+//            full song, real muting, and lyrics sync without a Spotify login.
+// Optional: lyrics: "music/song.lrc" (your own synced lyrics),
+//           color: "hsl(200 70% 60%)" (skip the automatic cover color),
+//           lyricsOffset: 300 (ms; positive shows lines earlier).
+export const playlist = [
+  {
+    id: "blinding-lights",
+    title: "Blinding Lights",
+    artist: "The Weeknd",
+    spotify: "spotify:track:0VjIjW4GlUZAMYd2vXMi3b",
+    cover: "https://i.scdn.co/image/ab67616d00001e028863bc11d2aa12b54f5aeb36",
+  },
+  {
+    id: "die-with-a-smile",
+    title: "Die With A Smile",
+    artist: "Lady Gaga, Bruno Mars",
+    spotify: "spotify:track:2plbrEY59IikOBgBGLjaoe",
+    cover: "https://i.scdn.co/image/ab67616d00001e0282ea2e9e1858aa012c57cd45",
+  },
+  {
+    id: "as-it-was",
+    title: "As It Was",
+    artist: "Harry Styles",
+    spotify: "spotify:track:4Dvkj6JhhA12EX05fT7y2e",
+    cover: "https://i.scdn.co/image/ab67616d00001e0282ce362511fb3d9dda6578ee",
+  },
+  {
+    id: "levitating",
+    title: "Levitating",
+    artist: "Dua Lipa",
+    spotify: "spotify:track:39LLxExYz6ewLAcYrzQQyP",
+    cover: "https://i.scdn.co/image/ab67616d00001e02c88bae7846e62a8ba59ee0bd",
+  },
+];
+
 // Extra project technologies share the toolkit's icon component.
 export const projectTools = {
   "Inertia.js": { icon: "solid fa-arrows-left-right" },
