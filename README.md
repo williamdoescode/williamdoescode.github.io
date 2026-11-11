@@ -82,4 +82,13 @@ The same `docs/` build runs on any cPanel (Apache) host. No Node.js app or serve
 2. Zip the **contents** of `docs/`, including the hidden `.htaccess`, and upload the zip to `public_html` (or a subfolder).
 3. Extract it there. In File Manager, enable **Settings → Show Hidden Files** to confirm `.htaccess` is present.
 
+### White screen?
+
+A white screen means the server is showing the root `index.html`, the Vite development page, instead of the build in `docs/`. That happens when the repository is cloned or uploaded straight into `public_html`, or when **Deploy HEAD Commit** was never run. Two safety nets now handle it:
+
+- The root `.htaccess` serves every request from `docs/` when the repository itself is the web root (needs `mod_rewrite`, which cPanel hosts have by default). This also hides `.git`, `src/`, and `node_modules/`.
+- If rewrites are unavailable, the development page sends visitors to `docs/` when its source script can't run.
+
+The cleanest setup is still Option A or B, which puts the built files directly in `public_html`.
+
 Filenames on cPanel are case-sensitive, unlike on Windows, so keep image references in `src/data.js` matching the files exactly. To force HTTPS, use **Domains → Force HTTPS Redirect** in cPanel.

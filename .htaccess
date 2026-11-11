@@ -1,0 +1,15 @@
+# cPanel fallback for when this repository itself is the web root, for example
+# when it is cloned straight into public_html or uploaded as-is.
+# The root index.html is the Vite *development* page (it loads /src/main.jsx)
+# and shows a white screen on Apache, so every request is served from the
+# production build in docs/ instead. This also keeps .git, src/, and
+# node_modules/ out of reach. docs/.htaccess still applies inside docs/.
+# A normal deploy (.cpanel.yml copies docs/ into public_html) never uses this file.
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_URI} !/docs/
+  RewriteRule ^(.*)$ docs/$1 [L]
+</IfModule>
