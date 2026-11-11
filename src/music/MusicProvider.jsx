@@ -12,6 +12,11 @@ import { extractColor } from "./color.js";
 import { lineAt, loadLyrics } from "./lyrics.js";
 import { mediaUrl } from "./media.js";
 import { loadSpotifyApi } from "./spotify.js";
+import { loadYouTubeApi } from "./youtube.js";
+
+// A track plays from its own file first, then YouTube, then Spotify.
+export const sourceOf = (track) =>
+  !track ? null : track.audio ? "audio" : track.youtube ? "youtube" : "spotify";
 
 const MusicContext = createContext(null);
 const BACKDROP_KEY = "portfolio-lyrics-backdrop";
@@ -58,10 +63,18 @@ export function MusicProvider({ children }) {
   const linesRef = useRef([]);
   const lineRef = useRef(-1);
   const clock = useRef({ position: 0, duration: 0, at: 0, paused: true });
-  const engine = useRef({ kind: null, audio: null, controller: null, creating: null });
+  const engine = useRef({
+    kind: null,
+    audio: null,
+    controller: null,
+    creating: null,
+    youtube: null,
+    creatingYouTube: null,
+  });
   const spotifyFlags = useRef({ pendingPlay: false, played: false });
   const tickers = useRef(new Set());
   const embedHost = useRef(null);
+  const videoHost = useRef(null);
   const nextRef = useRef(() => {});
 
   const subscribe = useCallback((fn) => {
@@ -70,16 +83,31 @@ export function MusicProvider({ children }) {
   }, []);
 
   const getPosition = useCallback(() => {
-    const { kind, audio } = engine.current;
+    const { kind, audio, youtube } = engine.current;
     if (kind === "audio") return (audio?.currentTime || 0) * 1000;
     const c = clock.current;
+    const now = performance.now();
+    if (kind === "youtube" && youtube?.getCurrentTime) {
+      // YouTube reports time in steps; fill the gaps smoothly and never let a
+      // slightly stale report pull the lyrics backwards.
+      const reported = youtube.getCurrentTime() * 1000;
+      if (reported !== c.reported) {
+        c.reported = reported;
+        const predicted = c.position + now - c.at;
+        if (c.paused || reported > predicted || predicted - reported > 400) {
+          c.position = reported;
+          c.at = now;
+        }
+      }
+    }
     if (c.paused) return c.position;
-    return Math.min(c.position + performance.now() - c.at, c.duration || Infinity);
+    return Math.min(c.position + now - c.at, c.duration || Infinity);
   }, []);
 
   const getDuration = useCallback(() => {
-    const { kind, audio } = engine.current;
+    const { kind, audio, youtube } = engine.current;
     if (kind === "audio") return (audio?.duration || 0) * 1000;
+    if (kind === "youtube") return (youtube?.getDuration?.() || 0) * 1000;
     return clock.current.duration;
   }, []);
 
@@ -162,6 +190,65 @@ export function MusicProvider({ children }) {
     [onSpotifyUpdate],
   );
 
+  const onYouTubeState = useCallback(({ data, target }) => {
+    if (engine.current.kind !== "youtube") return;
+    const c = clock.current;
+    c.position = target.getCurrentTime() * 1000;
+    c.duration = target.getDuration() * 1000;
+    c.at = performance.now();
+    c.paused = data !== 1;
+    if (data === 1) setStatus("playing");
+    else if (data === 2) setStatus("paused");
+    else if (data === 3) setStatus("loading");
+    else if (data === 0) nextRef.current();
+  }, []);
+
+  const onYouTubeError = useCallback(({ data }) => {
+    if (engine.current.kind !== "youtube") return;
+    setStatus("error");
+    setError(
+      data === 101 || data === 150
+        ? "This video's owner doesn't allow playback on other websites. Try another track."
+        : "This video couldn't be played. Try another track.",
+    );
+  }, []);
+
+  const getYouTube = useCallback(
+    async (videoId) => {
+      const e = engine.current;
+      if (e.youtube) {
+        e.youtube.loadVideoById(videoId);
+        return e.youtube;
+      }
+      e.creatingYouTube ??= loadYouTubeApi().then(
+        (YT) =>
+          new Promise((resolve) => {
+            const target = document.createElement("div");
+            videoHost.current.replaceChildren(target);
+            new YT.Player(target, {
+              host: "https://www.youtube-nocookie.com",
+              videoId,
+              width: "100%",
+              height: "100%",
+              playerVars: { autoplay: 1, playsinline: 1, rel: 0 },
+              events: {
+                onReady: ({ target: player }) => resolve(player),
+                onStateChange: onYouTubeState,
+                onError: onYouTubeError,
+              },
+            });
+          }),
+      );
+      try {
+        e.youtube = await e.creatingYouTube;
+      } finally {
+        e.creatingYouTube = null;
+      }
+      return e.youtube;
+    },
+    [onYouTubeState, onYouTubeError],
+  );
+
   const select = useCallback(
     async (i) => {
       const next = playlist[i];
@@ -176,8 +263,25 @@ export function MusicProvider({ children }) {
       clock.current = { position: 0, duration: 0, at: performance.now(), paused: true };
       spotifyFlags.current = { pendingPlay: true, played: false };
       const e = engine.current;
-      if (next.audio) {
-        e.controller?.pause();
+      const source = sourceOf(next);
+      if (source !== "spotify") e.controller?.pause();
+      if (source !== "youtube") e.youtube?.pauseVideo?.();
+      if (source !== "audio") e.audio?.pause();
+      if (source === "youtube") {
+        e.kind = "youtube";
+        try {
+          const player = await getYouTube(next.youtube);
+          if (indexRef.current !== i) return;
+          mutedRef.current ? player.mute() : player.unMute();
+          player.playVideo();
+        } catch {
+          if (indexRef.current !== i) return;
+          setStatus("error");
+          setError("YouTube couldn't load. Check your connection or content blocker.");
+        }
+        return;
+      }
+      if (source === "audio") {
         e.kind = "audio";
         const audio = getAudio();
         audio.src = mediaUrl(next.audio);
@@ -189,7 +293,6 @@ export function MusicProvider({ children }) {
         }
         return;
       }
-      e.audio?.pause();
       e.kind = "spotify";
       // Spotify's embed has no volume control, so "mute" there means paused.
       mutedRef.current = false;
@@ -203,7 +306,7 @@ export function MusicProvider({ children }) {
         setError("Spotify couldn't load. Check your connection or content blocker.");
       }
     },
-    [getAudio, getController],
+    [getAudio, getController, getYouTube],
   );
 
   const next = useCallback(
@@ -213,8 +316,12 @@ export function MusicProvider({ children }) {
   nextRef.current = next;
 
   const seek = useCallback((ms) => {
-    const { kind, audio, controller } = engine.current;
+    const { kind, audio, controller, youtube } = engine.current;
     if (kind === "audio" && audio) audio.currentTime = ms / 1000;
+    if (kind === "youtube" && youtube) {
+      youtube.seekTo(ms / 1000, true);
+      Object.assign(clock.current, { position: ms, at: performance.now() });
+    }
     if (kind === "spotify" && controller) {
       controller.seek(ms / 1000);
       Object.assign(clock.current, { position: ms, at: performance.now() });
@@ -227,9 +334,13 @@ export function MusicProvider({ children }) {
   }, [getPosition, seek, select]);
 
   const togglePlay = useCallback(() => {
-    const { kind, audio, controller } = engine.current;
+    const { kind, audio, controller, youtube } = engine.current;
     if (indexRef.current < 0 || !kind) return select(Math.max(indexRef.current, 0));
     if (kind === "audio") return audio.paused ? audio.play().catch(() => {}) : audio.pause();
+    if (kind === "youtube") {
+      if (!youtube) return;
+      return youtube.getPlayerState() === 1 ? youtube.pauseVideo() : youtube.playVideo();
+    }
     if (!controller) return;
     if (mutedRef.current) {
       mutedRef.current = false;
@@ -243,8 +354,9 @@ export function MusicProvider({ children }) {
     const value = !mutedRef.current;
     mutedRef.current = value;
     setMuted(value);
-    const { kind, audio, controller } = engine.current;
+    const { kind, audio, controller, youtube } = engine.current;
     if (kind === "audio" && audio) audio.muted = value;
+    if (kind === "youtube" && youtube) value ? youtube.mute() : youtube.unMute();
     if (kind === "spotify" && controller) value ? controller.pause() : controller.resume();
   }, []);
 
@@ -253,6 +365,7 @@ export function MusicProvider({ children }) {
     e.audio?.pause();
     e.audio?.removeAttribute("src");
     e.controller?.pause();
+    e.youtube?.pauseVideo?.();
     e.kind = null;
     indexRef.current = -1;
     setIndex(-1);
@@ -330,9 +443,9 @@ export function MusicProvider({ children }) {
   }, [active, backdrop, color, status]);
 
   // A Spotify track much longer than what's playing means a 30-second preview.
+  const source = sourceOf(track);
   const preview =
-    Boolean(track?.spotify) &&
-    !track?.audio &&
+    source === "spotify" &&
     duration > 0 &&
     duration < 31000 &&
     lyrics.duration > 45;
@@ -341,6 +454,7 @@ export function MusicProvider({ children }) {
     () => ({
       playlist,
       track,
+      source,
       index,
       status,
       muted,
@@ -350,6 +464,7 @@ export function MusicProvider({ children }) {
       preview,
       error,
       embedHost,
+      videoHost,
       subscribe,
       select,
       togglePlay,
@@ -362,6 +477,7 @@ export function MusicProvider({ children }) {
     }),
     [
       track,
+      source,
       index,
       status,
       muted,

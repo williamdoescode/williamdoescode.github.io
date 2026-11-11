@@ -81,42 +81,46 @@ export const toolkit = [
 
 // Entertainment playlist. Each track needs a title + artist (used to find
 // synced lyrics on LRCLIB) and a cover (its colors tint the page).
-// Sources, pick one per track:
-//   spotify: "spotify:track:<id>"  plays through Spotify's embed. Copy the id
-//            from Spotify → Share → Copy Song Link.
-//   audio:   "music/song.mp3"      a file in public/music/. Gives everyone the
-//            full song, real muting, and lyrics sync without a Spotify login.
+// Sources, pick one per track (if several are set: audio, then youtube, then spotify):
+//   youtube: "<video id>"           full song for every visitor, no login. The id
+//            is the part after watch?v= in the link. Pick the artist's official
+//            "(Official Audio)" or "- Topic" upload: music videos often have
+//            intros or skits that push the lyrics out of sync.
+//   audio:   "music/song.mp3"       a file in public/music/. Only for music you
+//            own or have the rights to share.
+//   spotify: "spotify:track:<id>"   Spotify's embed. Full songs only for visitors
+//            logged in to Spotify; everyone else hears a 30-second preview.
 // Optional: lyrics: "music/song.lrc" (your own synced lyrics),
 //           color: "hsl(200 70% 60%)" (skip the automatic cover color),
-//           lyricsOffset: 300 (ms; positive shows lines earlier).
+//           lyricsOffset: 300 (ms; positive shows lines earlier, negative later).
 export const playlist = [
   {
     id: "blinding-lights",
     title: "Blinding Lights",
     artist: "The Weeknd",
-    spotify: "spotify:track:0VjIjW4GlUZAMYd2vXMi3b",
+    youtube: "fHI8X4OXluQ", // TheWeekndVEVO, Official Audio
     cover: "https://i.scdn.co/image/ab67616d00001e028863bc11d2aa12b54f5aeb36",
   },
   {
     id: "die-with-a-smile",
     title: "Die With A Smile",
     artist: "Lady Gaga, Bruno Mars",
-    spotify: "spotify:track:2plbrEY59IikOBgBGLjaoe",
+    youtube: "PfH7jq_uSCM", // LadyGagaVEVO, Audio
     cover: "https://i.scdn.co/image/ab67616d00001e0282ea2e9e1858aa012c57cd45",
   },
   {
     id: "as-it-was",
     title: "As It Was",
     artist: "Harry Styles",
-    spotify: "spotify:track:4Dvkj6JhhA12EX05fT7y2e",
+    youtube: "V1Z586zoeeE", // HarryStylesVEVO, Audio
     cover: "https://i.scdn.co/image/ab67616d00001e0282ce362511fb3d9dda6578ee",
   },
   {
-    id: "levitating",
-    title: "Levitating",
-    artist: "Dua Lipa",
-    spotify: "spotify:track:39LLxExYz6ewLAcYrzQQyP",
-    cover: "https://i.scdn.co/image/ab67616d00001e02c88bae7846e62a8ba59ee0bd",
+    id: "espresso",
+    title: "Espresso",
+    artist: "Sabrina Carpenter",
+    youtube: "51zjlMhdSTE", // Sabrina Carpenter, Official Audio
+    cover: "https://i.scdn.co/image/ab67616d00001e02659cd4673230913b3918e0d5",
   },
 ];
 

@@ -3,7 +3,13 @@ import Icon from "../Icon.jsx";
 import { BackdropButton, Equalizer, MuteButton, PlayButton } from "./Controls.jsx";
 import { formatTime } from "./lyrics.js";
 import { mediaUrl } from "./media.js";
-import { useMusic, useTicker } from "./MusicProvider.jsx";
+import { sourceOf, useMusic, useTicker } from "./MusicProvider.jsx";
+
+const SOURCE_ICONS = {
+  audio: "solid fa-music",
+  youtube: "brands fa-youtube",
+  spotify: "brands fa-spotify",
+};
 
 function Progress() {
   const { track, seek } = useMusic();
@@ -72,11 +78,26 @@ function statusNote({ track, status, lyrics, preview, error }) {
 
 export default function MusicPanel() {
   const music = useMusic();
-  const { playlist, track, index, status, select, togglePlay, previous, next, embedHost } =
-    music;
+  const {
+    playlist,
+    track,
+    source,
+    index,
+    status,
+    select,
+    togglePlay,
+    previous,
+    next,
+    embedHost,
+    videoHost,
+  } = music;
   const shown = track ?? playlist[0];
   const playing = status === "playing";
   const note = statusNote(music);
+  const services = [
+    playlist.some((item) => sourceOf(item) === "youtube") && "YouTube",
+    playlist.some((item) => sourceOf(item) === "spotify") && "Spotify",
+  ].filter(Boolean);
 
   return (
     <div className="music-panel" data-state={status}>
@@ -147,24 +168,22 @@ export default function MusicPanel() {
                   <strong>{item.title}</strong>
                   <span>{item.artist}</span>
                 </span>
-                <Icon
-                  name={item.audio ? "solid fa-music" : "brands fa-spotify"}
-                  className="track-source"
-                />
+                <Icon name={SOURCE_ICONS[sourceOf(item)]} className="track-source" />
               </button>
             </li>
           );
         })}
       </ol>
 
-      {/* Spotify replaces the child of this element with its player. */}
-      <div className="spotify-embed" ref={embedHost} />
+      {/* YouTube and Spotify each replace the child of their element with a player. */}
+      <div className="video-embed" ref={videoHost} hidden={source !== "youtube"} />
+      <div className="spotify-embed" ref={embedHost} hidden={source !== "spotify"} />
 
       <p className="music-note" role="status">
         {note}
       </p>
       <p className="music-credit">
-        Music via Spotify · Lyrics via{" "}
+        {services.length > 0 && `Music via ${services.join(" & ")} · `}Lyrics via{" "}
         <a href="https://lrclib.net" target="_blank" rel="noopener noreferrer">
           LRCLIB
         </a>
