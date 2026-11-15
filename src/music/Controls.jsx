@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import Icon from "../Icon.jsx";
 import { useMusic } from "./MusicProvider.jsx";
 
@@ -27,8 +28,15 @@ export function PlayButton({ className = "" }) {
   );
 }
 
+const volumeIcon = (muted, volume) =>
+  muted || volume === 0
+    ? "solid fa-volume-xmark"
+    : volume < 50
+      ? "solid fa-volume-low"
+      : "solid fa-volume-high";
+
 export function MuteButton() {
-  const { muted, toggleMute, track } = useMusic();
+  const { muted, volume, setVolume, toggleMute, track } = useMusic();
   return (
     <button
       type="button"
@@ -37,10 +45,77 @@ export function MuteButton() {
       aria-pressed={muted}
       title={muted ? "Unmute" : "Mute"}
       disabled={!track}
-      onClick={toggleMute}
+      // At zero volume, "unmute" means bringing the sound back.
+      onClick={() => (!muted && volume === 0 ? setVolume(60) : toggleMute())}
     >
-      <Icon name={muted ? "solid fa-volume-xmark" : "solid fa-volume-high"} />
+      <Icon name={volumeIcon(muted, volume)} />
     </button>
+  );
+}
+
+export function VolumeSlider() {
+  const { muted, volume, setVolume, source } = useMusic();
+  const unsupported = source === "spotify";
+  const shown = muted ? 0 : volume;
+  return (
+    <input
+      type="range"
+      className="volume-slider"
+      min="0"
+      max="100"
+      step="1"
+      value={shown}
+      aria-label="Volume"
+      aria-valuetext={`${shown}%`}
+      title={unsupported ? "Spotify's player doesn't allow volume changes here" : `Volume ${shown}%`}
+      disabled={unsupported}
+      style={{ "--fill": `${shown}%` }}
+      onChange={(event) => setVolume(Number(event.target.value))}
+    />
+  );
+}
+
+// Compact control for tight spaces: a button that opens a slider above it.
+export function VolumePopover() {
+  const { muted, volume } = useMusic();
+  const [open, setOpen] = useState(false);
+  const root = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const outside = (event) => !root.current?.contains(event.target) && setOpen(false);
+    const escape = (event) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      root.current?.querySelector("button")?.focus();
+    };
+    document.addEventListener("pointerdown", outside);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", outside);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [open]);
+
+  return (
+    <div className="volume-popover-wrap" ref={root}>
+      <button
+        type="button"
+        className="icon-button"
+        aria-label="Volume"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+      >
+        <Icon name={volumeIcon(muted, volume)} />
+      </button>
+      {open && (
+        <div className="volume-popover" role="group" aria-label="Volume">
+          <MuteButton />
+          <VolumeSlider />
+          <span className="volume-value">{muted ? 0 : volume}%</span>
+        </div>
+      )}
+    </div>
   );
 }
 

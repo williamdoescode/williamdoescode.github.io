@@ -46,7 +46,7 @@ export default function Intro({ onFinish }) {
           </span>
         </div>
         <span className="intro-slice" />
-        <span className="intro-caption">WILLIAM VELASCO / WEB DEVELOPER</span>
+        <span className="intro-caption">WILLIAM / WEB DEVELOPER</span>
       </div>
       <button className="intro-skip" type="button" onClick={onFinish}>
         Skip intro <span aria-hidden="true">↗</span>

@@ -93,34 +93,60 @@ export const toolkit = [
 // Optional: lyrics: "music/song.lrc" (your own synced lyrics),
 //           color: "hsl(200 70% 60%)" (skip the automatic cover color),
 //           lyricsOffset: 300 (ms; positive shows lines earlier, negative later).
+// Covers come from Apple Music; duration (ms) helps pick the matching lyrics.
+const appleCover = (path) =>
+  `https://is1-ssl.mzstatic.com/image/thumb/${path}/600x600bb.jpg`;
+
 export const playlist = [
   {
-    id: "blinding-lights",
-    title: "Blinding Lights",
-    artist: "The Weeknd",
-    youtube: "fHI8X4OXluQ", // TheWeekndVEVO, Official Audio
-    cover: "https://i.scdn.co/image/ab67616d00001e028863bc11d2aa12b54f5aeb36",
+    id: "blah-blah",
+    title: "Blah Blah",
+    artist: "Joji",
+    youtube: "g8SQa3icsj4", // Joji
+    duration: 162000,
+    cover: appleCover(
+      "Music211/v4/70/9c/53/709c53a0-693c-8644-9480-232da0197dfa/00823375199489_Cover.jpg",
+    ),
   },
   {
-    id: "die-with-a-smile",
-    title: "Die With A Smile",
-    artist: "Lady Gaga, Bruno Mars",
-    youtube: "PfH7jq_uSCM", // LadyGagaVEVO, Audio
-    cover: "https://i.scdn.co/image/ab67616d00001e0282ea2e9e1858aa012c57cd45",
+    id: "past-wont-leave-my-bed",
+    title: "Past Won't Leave My Bed",
+    artist: "Joji",
+    youtube: "acA8Rr3gEco", // Joji, Official Video
+    duration: 166000,
+    cover: appleCover(
+      "Music221/v4/58/1b/85/581b8559-1868-e64c-c796-b117bb417dcc/198704821745_Cover.jpg",
+    ),
   },
   {
-    id: "as-it-was",
-    title: "As It Was",
-    artist: "Harry Styles",
-    youtube: "V1Z586zoeeE", // HarryStylesVEVO, Audio
-    cover: "https://i.scdn.co/image/ab67616d00001e0282ce362511fb3d9dda6578ee",
+    id: "love-you-less",
+    title: "LOVE YOU LESS",
+    artist: "Joji",
+    youtube: "ylFHA2hQPn0", // Joji, 360° Visualizer
+    duration: 201000,
+    cover: appleCover(
+      "Music221/v4/58/1b/85/581b8559-1868-e64c-c796-b117bb417dcc/198704821745_Cover.jpg",
+    ),
   },
   {
-    id: "espresso",
-    title: "Espresso",
-    artist: "Sabrina Carpenter",
-    youtube: "51zjlMhdSTE", // Sabrina Carpenter, Official Audio
-    cover: "https://i.scdn.co/image/ab67616d00001e02659cd4673230913b3918e0d5",
+    id: "rearrange-my-world",
+    title: "Rearrange My World",
+    artist: "Daniel Caesar, Rex Orange County",
+    youtube: "mZOf5_rIfK4", // DanielCaesarVEVO, Official Audio
+    duration: 229000,
+    cover: appleCover(
+      "Music211/v4/b1/1a/02/b11a024f-9da5-3304-2a42-a215e50ff909/25UMGIM11252.rgb.jpg",
+    ),
+  },
+  {
+    id: "angel",
+    title: "ANGEL",
+    artist: "keshi",
+    youtube: "nVLfZmVpVOI", // keshiVEVO, Visualizer
+    duration: 247000,
+    cover: appleCover(
+      "Music126/v4/63/05/ff/6305ff3d-7399-976f-c853-6b7e62ff2314/22UMGIM07344.rgb.jpg",
+    ),
   },
 ];
 

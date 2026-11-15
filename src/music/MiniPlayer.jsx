@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import Icon from "../Icon.jsx";
-import { BackdropButton, MuteButton, PlayButton } from "./Controls.jsx";
+import {
+  BackdropButton,
+  MuteButton,
+  PlayButton,
+  VolumePopover,
+  VolumeSlider,
+} from "./Controls.jsx";
 import { mediaUrl } from "./media.js";
 import { useMusic, useTicker } from "./MusicProvider.jsx";
 
@@ -56,7 +62,14 @@ export default function MiniPlayer() {
         >
           <Icon name="solid fa-forward-step" />
         </button>
-        <MuteButton />
+        {/* Roomy screens get an inline slider; phones get a pop-up one. */}
+        <div className="mini-volume-inline">
+          <MuteButton />
+          <VolumeSlider />
+        </div>
+        <div className="mini-volume-compact">
+          <VolumePopover />
+        </div>
         <BackdropButton />
         <button type="button" className="icon-button" aria-label="Stop music" onClick={stop}>
           <Icon name="solid fa-xmark" />

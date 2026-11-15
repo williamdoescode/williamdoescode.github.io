@@ -46,7 +46,14 @@ export async function loadLyrics(track, signal) {
     if (!record?.syncedLyrics) {
       const matches =
         (await fetchJson(`https://lrclib.net/api/search?${query}`, signal)) ?? [];
-      record = matches.find((item) => item.syncedLyrics) ?? record;
+      // Prefer the synced version whose length matches the song being played.
+      const seconds = track.duration ? track.duration / 1000 : null;
+      const synced = matches.filter((item) => item.syncedLyrics);
+      if (seconds)
+        synced.sort(
+          (a, b) => Math.abs(a.duration - seconds) - Math.abs(b.duration - seconds),
+        );
+      record = synced[0] ?? record;
     }
     result = toResult(record);
   }

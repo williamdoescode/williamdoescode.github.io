@@ -1,9 +1,16 @@
 import { useRef } from "react";
 import Icon from "../Icon.jsx";
-import { BackdropButton, Equalizer, MuteButton, PlayButton } from "./Controls.jsx";
+import {
+  BackdropButton,
+  Equalizer,
+  MuteButton,
+  PlayButton,
+  VolumeSlider,
+} from "./Controls.jsx";
 import { formatTime } from "./lyrics.js";
 import { mediaUrl } from "./media.js";
 import { sourceOf, useMusic, useTicker } from "./MusicProvider.jsx";
+import MusicSearch from "./MusicSearch.jsx";
 
 const SOURCE_ICONS = {
   audio: "solid fa-music",
@@ -80,6 +87,7 @@ export default function MusicPanel() {
   const music = useMusic();
   const {
     playlist,
+    canSearch,
     track,
     source,
     index,
@@ -105,6 +113,8 @@ export default function MusicPanel() {
         <div className="now-cover">
           <img src={mediaUrl(shown.cover)} alt="" width="112" height="112" />
           <span className="vinyl" aria-hidden="true" />
+          {/* YouTube replaces this element's child with its player. */}
+          <div className="video-embed" ref={videoHost} hidden={source !== "youtube"} />
         </div>
         <div className="now-meta">
           <span className="eyebrow">
@@ -142,11 +152,16 @@ export default function MusicPanel() {
             </button>
           </div>
           <div className="player-toggles">
-            <MuteButton />
+            <div className="volume-control">
+              <MuteButton />
+              <VolumeSlider />
+            </div>
             <BackdropButton />
           </div>
         </div>
       </div>
+
+      {canSearch && <MusicSearch />}
 
       <ol className="track-list" aria-label="Playlist">
         {playlist.map((item, i) => {
@@ -175,15 +190,15 @@ export default function MusicPanel() {
         })}
       </ol>
 
-      {/* YouTube and Spotify each replace the child of their element with a player. */}
-      <div className="video-embed" ref={videoHost} hidden={source !== "youtube"} />
+      {/* Spotify replaces the child of this element with its player. */}
       <div className="spotify-embed" ref={embedHost} hidden={source !== "spotify"} />
 
       <p className="music-note" role="status">
         {note}
       </p>
       <p className="music-credit">
-        {services.length > 0 && `Music via ${services.join(" & ")} · `}Lyrics via{" "}
+        {services.length > 0 && `Music via ${services.join(" & ")} · `}
+        {canSearch && "Search by iTunes · "}Lyrics via{" "}
         <a href="https://lrclib.net" target="_blank" rel="noopener noreferrer">
           LRCLIB
         </a>

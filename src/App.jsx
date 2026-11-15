@@ -56,7 +56,7 @@ function SocialLinks() {
 function Header({ theme, onToggle }) {
   return (
     <header className="site-header">
-      <a className="wordmark" href="#top" aria-label="William Velasco, home">
+      <a className="wordmark" href="#top" aria-label="William, home">
         wv<span> /</span>
       </a>
       <nav aria-label="Main navigation">
@@ -85,7 +85,7 @@ function Profile() {
         <div className="portrait-frame">
           <img
             src={asset("images/wmv.png")}
-            alt="William Velasco"
+            alt="William"
             width="132"
             height="152"
             fetchPriority="high"
@@ -571,7 +571,7 @@ export default function App() {
         </main>
         <footer className="site-footer">
           <p>
-            © {new Date().getFullYear()} William Velasco <span>/</span> Made
+            © {new Date().getFullYear()} William <span>/</span> Made
             with care.
           </p>
           <VisitorsLink />

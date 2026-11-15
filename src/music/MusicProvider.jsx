@@ -13,10 +13,18 @@ import { lineAt, loadLyrics } from "./lyrics.js";
 import { mediaUrl } from "./media.js";
 import { loadSpotifyApi } from "./spotify.js";
 import { loadYouTubeApi } from "./youtube.js";
+import { canSearch, findVideo } from "./search.js";
 
 // A track plays from its own file first, then YouTube, then Spotify.
+// Searched songs get their YouTube video when they're first played.
 export const sourceOf = (track) =>
-  !track ? null : track.audio ? "audio" : track.youtube ? "youtube" : "spotify";
+  !track
+    ? null
+    : track.audio
+      ? "audio"
+      : track.youtube || track.findOnYouTube
+        ? "youtube"
+        : "spotify";
 
 const MusicContext = createContext(null);
 const BACKDROP_KEY = "portfolio-lyrics-backdrop";
@@ -38,6 +46,18 @@ export function useTicker(callback) {
   );
 }
 
+const VOLUME_KEY = "portfolio-music-volume";
+
+function readVolume() {
+  try {
+    const saved = localStorage.getItem(VOLUME_KEY);
+    const value = Number(saved);
+    return saved !== null && Number.isFinite(value) ? Math.min(100, Math.max(0, value)) : 80;
+  } catch {
+    return 80;
+  }
+}
+
 function readBackdrop() {
   try {
     return localStorage.getItem(BACKDROP_KEY) !== "off";
@@ -50,6 +70,8 @@ export function MusicProvider({ children }) {
   const [index, setIndex] = useState(-1);
   const [status, setStatus] = useState("idle"); // idle | loading | playing | paused | error
   const [muted, setMuted] = useState(false);
+  const [volume, setVolumeState] = useState(readVolume); // 0–100
+  const volumeRef = useRef(volume);
   const [duration, setDuration] = useState(0);
   const [backdrop, setBackdropState] = useState(readBackdrop);
   const [lyrics, setLyrics] = useState(NO_LYRICS);
@@ -57,7 +79,10 @@ export function MusicProvider({ children }) {
   const [color, setColor] = useState(null);
   const [error, setError] = useState("");
 
-  const track = playlist[index] ?? null;
+  // The playlist from data.js, plus any songs visitors search for and play.
+  const [queue, setQueue] = useState(playlist);
+  const queueRef = useRef(playlist);
+  const track = queue[index] ?? null;
   const indexRef = useRef(-1);
   const mutedRef = useRef(false);
   const linesRef = useRef([]);
@@ -116,6 +141,7 @@ export function MusicProvider({ children }) {
     if (e.audio) return e.audio;
     const audio = new Audio();
     audio.preload = "auto";
+    audio.volume = volumeRef.current / 100;
     audio.addEventListener("playing", () => setStatus("playing"));
     audio.addEventListener("pause", () => !audio.ended && setStatus("paused"));
     audio.addEventListener("waiting", () => setStatus("loading"));
@@ -230,7 +256,16 @@ export function MusicProvider({ children }) {
               videoId,
               width: "100%",
               height: "100%",
-              playerVars: { autoplay: 1, playsinline: 1, rel: 0 },
+              // The site's own buttons drive playback, so YouTube's controls
+              // stay off and the player can sit at YouTube's 200×200 minimum.
+              playerVars: {
+                autoplay: 1,
+                controls: 0,
+                disablekb: 1,
+                playsinline: 1,
+                rel: 0,
+                iv_load_policy: 3,
+              },
               events: {
                 onReady: ({ target: player }) => resolve(player),
                 onStateChange: onYouTubeState,
@@ -251,7 +286,7 @@ export function MusicProvider({ children }) {
 
   const select = useCallback(
     async (i) => {
-      const next = playlist[i];
+      const next = queueRef.current[i];
       if (!next) return;
       indexRef.current = i;
       setIndex(i);
@@ -269,9 +304,25 @@ export function MusicProvider({ children }) {
       if (source !== "audio") e.audio?.pause();
       if (source === "youtube") {
         e.kind = "youtube";
+        if (!next.youtube) {
+          try {
+            next.youtube = await findVideo(next);
+          } catch (err) {
+            if (indexRef.current !== i) return;
+            setStatus("error");
+            setError(
+              err.message === "quota"
+                ? "Song search has reached today's limit. Try a song from the playlist."
+                : "Couldn't find a playable version of this song. Try another one.",
+            );
+            return;
+          }
+          if (indexRef.current !== i) return;
+        }
         try {
           const player = await getYouTube(next.youtube);
           if (indexRef.current !== i) return;
+          player.setVolume(volumeRef.current);
           mutedRef.current ? player.mute() : player.unMute();
           player.playVideo();
         } catch {
@@ -310,10 +361,25 @@ export function MusicProvider({ children }) {
   );
 
   const next = useCallback(
-    () => select((indexRef.current + 1) % playlist.length),
+    () => select((indexRef.current + 1) % queueRef.current.length),
     [select],
   );
   nextRef.current = next;
+
+  // Plays a searched song right after the current one (or first, if idle).
+  const playTrack = useCallback(
+    (song) => {
+      const list = queueRef.current;
+      const existing = list.findIndex((item) => item.id === song.id);
+      if (existing >= 0) return select(existing);
+      const at = indexRef.current + 1;
+      const updated = [...list.slice(0, at), song, ...list.slice(at)];
+      queueRef.current = updated;
+      setQueue(updated);
+      return select(at);
+    },
+    [select],
+  );
 
   const seek = useCallback((ms) => {
     const { kind, audio, controller, youtube } = engine.current;
@@ -330,7 +396,8 @@ export function MusicProvider({ children }) {
 
   const previous = useCallback(() => {
     if (getPosition() > 3000) return seek(0);
-    select((indexRef.current - 1 + playlist.length) % playlist.length);
+    const length = queueRef.current.length;
+    select((indexRef.current - 1 + length) % length);
   }, [getPosition, seek, select]);
 
   const togglePlay = useCallback(() => {
@@ -358,6 +425,28 @@ export function MusicProvider({ children }) {
     if (kind === "audio" && audio) audio.muted = value;
     if (kind === "youtube" && youtube) value ? youtube.mute() : youtube.unMute();
     if (kind === "spotify" && controller) value ? controller.pause() : controller.resume();
+  }, []);
+
+  // Spotify's embed has no volume control; YouTube and audio files do.
+  const setVolume = useCallback((level) => {
+    const value = Math.round(Math.min(100, Math.max(0, level)));
+    volumeRef.current = value;
+    setVolumeState(value);
+    const { kind, audio, youtube } = engine.current;
+    if (audio) audio.volume = value / 100;
+    youtube?.setVolume?.(value);
+    // Turning the volume up while muted unmutes, like most players.
+    if (value > 0 && mutedRef.current && kind !== "spotify") {
+      mutedRef.current = false;
+      setMuted(false);
+      if (kind === "audio" && audio) audio.muted = false;
+      if (kind === "youtube") youtube?.unMute?.();
+    }
+    try {
+      localStorage.setItem(VOLUME_KEY, String(value));
+    } catch {
+      /* The level still applies for this visit. */
+    }
   }, []);
 
   const stop = useCallback(() => {
@@ -416,7 +505,7 @@ export function MusicProvider({ children }) {
   // One animation loop drives the lyric clock and every registered ticker.
   useEffect(() => {
     if (index < 0) return;
-    const offset = (playlist[index].lyricsOffset ?? 0) + LEAD_MS;
+    const offset = (queueRef.current[index]?.lyricsOffset ?? 0) + LEAD_MS;
     let frame;
     const loop = () => {
       const position = getPosition();
@@ -452,12 +541,16 @@ export function MusicProvider({ children }) {
 
   const value = useMemo(
     () => ({
-      playlist,
+      playlist: queue,
+      canSearch,
+      playTrack,
       track,
       source,
       index,
       status,
       muted,
+      volume,
+      setVolume,
       backdrop,
       lyrics,
       line: preview ? -1 : line,
@@ -476,11 +569,15 @@ export function MusicProvider({ children }) {
       setBackdrop,
     }),
     [
+      queue,
+      playTrack,
       track,
       source,
       index,
       status,
       muted,
+      volume,
+      setVolume,
       backdrop,
       lyrics,
       line,

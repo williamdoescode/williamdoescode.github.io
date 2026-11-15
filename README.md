@@ -1,4 +1,4 @@
-﻿# William Velasco — React Portfolio
+﻿# William — React Portfolio
 
 A centered portfolio built with React and Vite, with a compact 820px centered container, split project rows, project galleries, and an icon-based toolkit.
 
@@ -74,6 +74,22 @@ Pets saved while developing land in `public/pets-api/data/`, which is git-ignore
 ### Moderation
 
 Create `pets-api/data/private/admin-token.txt` on the server containing a long random string. Then open the site at `#pets-admin`, enter the token, and each card in the Visitors panel gets a Delete button. Without that file, deleting is disabled.
+
+## Music
+
+The Entertainment section plays full songs through YouTube's embedded player. Synced lyrics from LRCLIB glow in both side gutters on screens 1360px and wider, and in the floating mini-player on smaller screens. The page tints itself with the album cover's color. The starter playlist lives in `src/data.js`.
+
+YouTube's terms don't allow hiding the player, so it shows at the 200×200 minimum in place of the album cover while a song plays.
+
+### Song search
+
+Visitors can search any song. Apple's iTunes Search API finds it, then the YouTube Data API picks the upload whose length best matches (official audio and "- Topic" uploads first), so the lyrics stay in sync. The search box only appears once a YouTube key is set:
+
+1. In [Google Cloud](https://console.cloud.google.com/), create a project, enable **YouTube Data API v3**, and create an **API key**.
+2. Restrict the key: **API restrictions → YouTube Data API v3**, and **Website restrictions** → your site addresses (for example `https://yourdomain.com/*` and `https://williamdoescode.github.io/*`). The key ships inside the page, so these restrictions are what protect it.
+3. Copy `.env.example` to `.env.local`, paste the key after `VITE_YOUTUBE_API_KEY=`, then run `npm run build` and deploy.
+
+The free quota is 10,000 units a day, and each new song search costs about 101, so roughly 100 searches a day. Each visitor's browser remembers its matches, so replaying a song costs nothing. When the quota runs out, the player says so and the playlist keeps working.
 
 ## GitHub Pages
 
