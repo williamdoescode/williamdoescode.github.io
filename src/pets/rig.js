@@ -7,6 +7,13 @@ export const SIZE = 32; // painted skin, in pixels
 export const FRAME = 48; // baked frame: extra room for jumps and lunges
 export const OX = 8; // where the skin sits inside a frame
 export const OY = 16;
+// Frames are drawn at twice the painted resolution, so parts can move and
+// turn in half-pixel steps. That is what keeps the motion smooth.
+export const RES = 2;
+export const PIXELS = FRAME * RES; // real width and height of a baked frame
+// Cats are drawn a little smaller than dogs. It is applied when a pet is
+// shown, so it also covers pets painted before the sizes differed.
+export const SPECIES_SCALE = { dog: 1, cat: 0.84 };
 
 // Back-to-front draw order. "B" legs are on the far side of the body.
 const ORDER = ["backB", "frontB", "tail", "body", "backA", "frontA", "head"];
@@ -108,9 +115,9 @@ const Z_GLYPHS = {
   4: ["####", "..#.", ".#..", "####"],
 };
 
-/** Draws one pose of a skin into a new FRAME×FRAME RGBA buffer. */
+/** Draws one pose of a skin into a new PIXELS×PIXELS RGBA buffer. */
 export function renderPose(skin, pose, species = "dog") {
-  const out = new Uint8ClampedArray(FRAME * FRAME * 4);
+  const out = new Uint8ClampedArray(PIXELS * PIXELS * 4);
   const pivots = pivotsFor(species);
   const underlay = underlayFor(species);
   const root = local(pose.root, pivots.root);
@@ -123,17 +130,17 @@ export function renderPose(skin, pose, species = "dog") {
     const inv = invert(world);
     const id = INDEX[part];
     const shade = part.endsWith("B") ? FAR_SHADE : 1;
-    for (let fy = 0; fy < FRAME; fy++) {
-      for (let fx = 0; fx < FRAME; fx++) {
-        const x = fx + 0.5 - OX;
-        const y = fy + 0.5 - OY;
+    for (let fy = 0; fy < PIXELS; fy++) {
+      for (let fx = 0; fx < PIXELS; fx++) {
+        const x = (fx + 0.5) / RES - OX;
+        const y = (fy + 0.5) / RES - OY;
         const sx = Math.floor(inv[0] * x + inv[2] * y + inv[4]);
         const sy = Math.floor(inv[1] * x + inv[3] * y + inv[5]);
         if (sx < 0 || sy < 0 || sx >= SIZE || sy >= SIZE) continue;
         const s = sy * SIZE + sx;
         if (PART_MAP[s] !== id && !(part === "body" && underlay[s])) continue;
         if (skin[s * 4 + 3] < 128) continue;
-        const o = (fy * FRAME + fx) * 4;
+        const o = (fy * PIXELS + fx) * 4;
         for (let c = 0; c < 3; c++) {
           const value = skin[s * 4 + c] * shade;
           out[o + c] = value + (255 - value) * flash;
@@ -148,8 +155,13 @@ export function renderPose(skin, pose, species = "dog") {
       [...row].forEach((cell, dx) => {
         const x = gx + dx;
         const y = gy + dy;
-        if (cell !== "#" || x < 0 || y < 0 || x >= FRAME || y >= FRAME) return;
-        out.set([143, 168, 216, 255], (y * FRAME + x) * 4);
+        if (cell !== "#" || x < 0 || y < 0 || x > FRAME - 1 || y > FRAME - 1) return;
+        for (let sy = 0; sy < RES; sy++)
+          for (let sx = 0; sx < RES; sx++)
+            out.set(
+              [143, 168, 216, 255],
+              ((Math.round(y * RES) + sy) * PIXELS + Math.round(x * RES) + sx) * 4,
+            );
       }),
     );
   }
@@ -164,12 +176,41 @@ const SHORT = {
   backB: "bb",
 };
 
-/** Bakes one named animation: { frames, ms, loop }. */
+const triple = (entry) =>
+  Array.isArray(entry) ? entry : [0, 0, entry || 0];
+const smooth = (t) => t * t * (3 - 2 * t);
+
+// Blends two keyframes. Flashes and sleep glyphs are not blended: they come
+// from the earlier keyframe.
+function between(a, b, t) {
+  const pose = { flash: a.flash, fx: a.fx };
+  for (const part of ["root", "body", ...Object.values(SHORT)]) {
+    const from = triple(a[part]);
+    const to = triple(b[part]);
+    pose[part] = from.map((value, i) => value + (to[i] - value) * t);
+  }
+  return pose;
+}
+
+/**
+ * Bakes one named animation: { frames, ms, loop }. Each keyframe is followed
+ * by `tween - 1` in-between poses, and the frame time shrinks to match.
+ */
 export function bakeAnimation(skin, name, species = "dog") {
-  const animation = ANIMATIONS[name];
+  const { frames: keys, ms, loop, tween = 3, linear } = ANIMATIONS[name];
+  const poses = [];
+  keys.forEach((key, i) => {
+    const next = keys[i + 1] ?? (loop ? keys[0] : null);
+    poses.push(key);
+    if (!next) return;
+    for (let step = 1; step < tween; step++) {
+      const t = step / tween;
+      poses.push(between(key, next, linear ? t : smooth(t)));
+    }
+  });
   return {
-    ms: animation.ms,
-    loop: animation.loop,
-    frames: animation.frames.map((pose) => renderPose(skin, pose, species)),
+    ms: ms / tween,
+    loop,
+    frames: poses.map((pose) => renderPose(skin, pose, species)),
   };
 }

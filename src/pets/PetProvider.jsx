@@ -14,17 +14,27 @@ import VisitorsPanel from "./VisitorsPanel.jsx";
 import PetLayer from "./PetLayer.jsx";
 
 const PLACED_KEY = "portfolio-pets-placed";
-const MINE_KEY = "portfolio-pets-mine";
+const MINE_KEY = "portfolio-pets-mine"; // ids only, from before edit tokens
+const KEYS_KEY = "portfolio-pets-keys"; // { petId: editToken }
 const MAX_PLACED = 12;
-const DEFAULT_PLACED = 3; // newest pets greet a first-time visitor
 
-function stored(key) {
+function read(key) {
   try {
-    const value = JSON.parse(localStorage.getItem(key));
-    return Array.isArray(value) ? value : null;
+    return JSON.parse(localStorage.getItem(key));
   } catch {
     return null;
   }
+}
+function stored(key) {
+  const value = read(key);
+  return Array.isArray(value) ? value : null;
+}
+// This visitor's own pets and their edit tokens. Pets made before tokens
+// existed are listed with an empty one; the server issues it on first edit.
+function storedKeys() {
+  const keys = Object.fromEntries((stored(MINE_KEY) || []).map((id) => [id, ""]));
+  const saved = read(KEYS_KEY);
+  return saved && typeof saved === "object" ? { ...keys, ...saved } : keys;
 }
 function store(key, value) {
   try {
@@ -39,18 +49,19 @@ export const usePets = () => useContext(PetContext);
 
 /**
  * Visitor pets: loads everyone's pets, remembers which ones this visitor let
- * loose on the page, and mounts the invite, editor, visitors panel, and the
+ * loose on the page (none until they choose some), and mounts the invite, editor, visitors panel, and the
  * roaming layer. If the pets API is unreachable the whole feature stays hidden.
  */
 export function PetProvider({ ready, children }) {
   const [pets, setPets] = useState(null);
   const [view, setView] = useState(null); // "editor" | "visitors"
+  const [editing, setEditing] = useState(null); // the pet being edited, if any
   // Entries are { id, n, at }: n re-mounts a pet that is dropped again, and
-  // at is where it was dropped. null means "not chosen yet".
+  // at is where it was dropped.
   const [placed, setPlaced] = useState(() =>
-    stored(PLACED_KEY)?.map((id) => ({ id, n: 0, at: null })) ?? null,
+    (stored(PLACED_KEY) || []).map((id) => ({ id, n: 0, at: null })),
   );
-  const [mine, setMine] = useState(() => stored(MINE_KEY) || []);
+  const [keys, setKeys] = useState(storedKeys);
   const [adminToken, setAdminToken] = useState("");
 
   useEffect(() => {
@@ -77,10 +88,7 @@ export function PetProvider({ ready, children }) {
 
   const roaming = useMemo(() => {
     if (!pets) return [];
-    const entries =
-      placed ??
-      pets.slice(0, DEFAULT_PLACED).map((pet) => ({ id: pet.id, n: 0, at: null }));
-    return entries
+    return placed
       .map((entry) => ({ ...entry, pet: pets.find((pet) => pet.id === entry.id) }))
       .filter((entry) => entry.pet);
   }, [pets, placed]);
@@ -88,14 +96,11 @@ export function PetProvider({ ready, children }) {
   const update = useCallback(
     (change) =>
       setPlaced((current) => {
-        const base =
-          current ??
-          (pets || []).slice(0, DEFAULT_PLACED).map((pet) => ({ id: pet.id, n: 0, at: null }));
-        const next = change(base).slice(-MAX_PLACED);
+        const next = change(current).slice(-MAX_PLACED);
         store(PLACED_KEY, next.map((entry) => entry.id));
         return next;
       }),
-    [pets],
+    [],
   );
   const place = useCallback(
     (id, at = null) =>
@@ -110,12 +115,17 @@ export function PetProvider({ ready, children }) {
     [update],
   );
 
-  const addPet = useCallback((pet, skin) => {
-    rememberSkin(pet.id, skin);
-    setPets((list) => [pet, ...(list || [])]);
-    setMine((list) => {
-      const next = [...list, pet.id];
-      store(MINE_KEY, next);
+  /** Records a pet this visitor just created or edited, with its edit token. */
+  const savePet = useCallback((pet, token, skin) => {
+    rememberSkin(pet, skin);
+    setPets((list) =>
+      list.some((other) => other.id === pet.id)
+        ? list.map((other) => (other.id === pet.id ? pet : other))
+        : [pet, ...list],
+    );
+    setKeys((current) => {
+      const next = { ...current, [pet.id]: token };
+      store(KEYS_KEY, next);
       return next;
     });
   }, []);
@@ -132,17 +142,21 @@ export function PetProvider({ ready, children }) {
       available: pets !== null,
       pets: pets || [],
       roaming,
-      mine,
+      keys,
+      editing,
       isAdmin: adminToken !== "",
       place,
       unplace,
-      addPet,
+      savePet,
       removePet,
-      openEditor: () => setView("editor"),
+      openEditor: (pet = null) => {
+        setEditing(pet);
+        setView("editor");
+      },
       openVisitors: () => setView("visitors"),
       close: () => setView(null),
     }),
-    [pets, roaming, mine, adminToken, place, unplace, addPet, removePet],
+    [pets, roaming, keys, editing, adminToken, place, unplace, savePet, removePet],
   );
 
   return (
@@ -152,7 +166,7 @@ export function PetProvider({ ready, children }) {
         <>
           <PetLayer />
           {!view && <PetInvite />}
-          {view === "editor" && <PetEditor />}
+          {view === "editor" && <PetEditor key={editing?.id} />}
           {view === "visitors" && <VisitorsPanel />}
         </>
       )}

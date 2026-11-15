@@ -1,15 +1,16 @@
 // Browser-side glue around the rig: loading a pet's painting and caching the
 // baked frames so each animation is only computed once per pet.
-import { bakeAnimation, FRAME, SIZE } from "./rig.js";
+import { bakeAnimation, PIXELS, SIZE } from "./rig.js";
 import { skinUrl } from "./api.js";
 
+// Keyed by image path: an edited pet gets a new path, so it reloads.
 const skins = new Map();
 
 /** Loads a saved pet's 32×32 painting as RGBA bytes. */
 export function loadSkin(pet) {
-  if (!skins.has(pet.id)) {
+  if (!skins.has(pet.skin)) {
     skins.set(
-      pet.id,
+      pet.skin,
       new Promise((resolve, reject) => {
         const image = new Image();
         image.crossOrigin = "anonymous";
@@ -25,9 +26,10 @@ export function loadSkin(pet) {
       }),
     );
   }
-  return skins.get(pet.id);
+  return skins.get(pet.skin);
 }
-export const rememberSkin = (id, skin) => skins.set(id, Promise.resolve(skin));
+export const rememberSkin = (pet, skin) =>
+  skins.set(pet.skin, Promise.resolve(skin));
 
 export function skinToPng(skin) {
   const canvas = document.createElement("canvas");
@@ -46,7 +48,7 @@ export function framesFor(skin, species, name) {
     const animation = bakeAnimation(skin, name, species);
     bySkin[key] = {
       ...animation,
-      frames: animation.frames.map((frame) => new ImageData(frame, FRAME, FRAME)),
+      frames: animation.frames.map((frame) => new ImageData(frame, PIXELS, PIXELS)),
     };
   }
   return bySkin[key];

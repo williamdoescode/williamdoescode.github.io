@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import Icon from "../Icon.jsx";
-import { FRAME } from "./rig.js";
+import { PIXELS, SPECIES_SCALE } from "./rig.js";
 import { framesFor, reducedMotion } from "./sprites.js";
 import { useSkin } from "./PetSprite.jsx";
 import { usePets } from "./PetProvider.jsx";
 
-const BOX = FRAME * 2; // on-screen size of a pet's frame
+const BOX = PIXELS; // on-screen size of a pet's frame
 const WALK_SPEED = 70; // px per second
 const GRAVITY = 1800;
 const DRAG_START = 6;
@@ -27,6 +27,7 @@ function RoamingPet({ pet, at, onRemove }) {
     if (!skin) return;
     const context = canvas.current.getContext("2d");
     const still = reducedMotion();
+    const size = SPECIES_SCALE[pet.species];
     const maxX = () => Math.max(0, window.innerWidth - BOX);
     const s = {
       x: at ? at.x - BOX / 2 : between(0, maxX()),
@@ -71,7 +72,7 @@ function RoamingPet({ pet, at, onRemove }) {
       else if (s.state === "held") {
         // After the yelp, dangle in the mid-jump pose.
         s.anim = "jump";
-        s.frame = 3;
+        s.frame = 6;
         s.frozen = true;
       } else if (s.state === "dying") {
         s.frozen = true;
@@ -106,14 +107,14 @@ function RoamingPet({ pet, at, onRemove }) {
       // animationEnded may have switched animation, so look the frame up again.
       context.putImageData(framesFor(skin, pet.species, s.anim).frames[s.frame], 0, 0);
       box.current.style.translate = `${Math.round(s.x)}px ${Math.round(s.y)}px`;
-      canvas.current.style.scale = s.dir < 0 ? "-1 1" : "1 1";
+      canvas.current.style.scale = `${s.dir * size} ${size}`;
       raf = requestAnimationFrame(tick);
     }
 
     if (s.y < 0) play("fall", "jump");
     else wander();
     if (s.state === "fall") {
-      s.frame = 4;
+      s.frame = 8;
       s.frozen = true;
     }
     raf = requestAnimationFrame(tick);
@@ -158,7 +159,7 @@ function RoamingPet({ pet, at, onRemove }) {
             wander();
           } else {
             play("fall", "jump");
-            s.frame = 4;
+            s.frame = 8;
             s.frozen = true;
           }
         }
@@ -193,7 +194,7 @@ function RoamingPet({ pet, at, onRemove }) {
   if (!skin) return null;
   return (
     <div ref={box} className="roaming-pet" data-tagged={tagged || undefined}>
-      <canvas ref={canvas} className="pet-sprite" width={FRAME} height={FRAME} />
+      <canvas ref={canvas} className="pet-sprite" width={PIXELS} height={PIXELS} />
       <button
         type="button"
         className="roaming-pet-hit"

@@ -36,7 +36,9 @@ export async function listPets() {
   if (!Array.isArray(pets)) throw new Error("The pet server is not available.");
   return pets;
 }
-export const createPet = async (pet) =>
-  (await post({ action: "create", ...pet })).pet;
+/** Both resolve to { pet, token }; the token lets this visitor edit it later. */
+export const createPet = (pet) => post({ action: "create", ...pet });
+export const updatePet = (id, token, pet) =>
+  post({ action: "update", id, token, ...pet });
 export const deletePet = (id, token) => post({ action: "delete", id, token });
 export const skinUrl = (pet) => BASE + pet.skin;

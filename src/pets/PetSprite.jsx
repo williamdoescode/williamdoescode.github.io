@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FRAME } from "./rig.js";
+import { PIXELS, SPECIES_SCALE } from "./rig.js";
 import { framesFor, loadSkin, reducedMotion } from "./sprites.js";
 
 /** Plays one animation of a skin. Non-looping ones hold their last frame. */
@@ -7,7 +7,7 @@ export default function PetSprite({
   skin,
   species,
   animation = "idle",
-  size = FRAME * 2,
+  size = PIXELS,
   onDone,
   className = "",
 }) {
@@ -40,9 +40,9 @@ export default function PetSprite({
     <canvas
       ref={canvas}
       className={`pet-sprite ${className}`}
-      width={FRAME}
-      height={FRAME}
-      style={{ width: size, height: size }}
+      width={PIXELS}
+      height={PIXELS}
+      style={{ width: size, height: size, scale: SPECIES_SCALE[species] }}
       aria-hidden="true"
     />
   );

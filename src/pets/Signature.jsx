@@ -12,7 +12,8 @@ const path = (stroke) =>
 /** A saved signature. It is drawn in the current text color. */
 export function Signature({ strokes }) {
   // Frame the ink itself, so a small signature in one corner still centers.
-  const points = strokes.flat();
+  const points = (strokes || []).flat();
+  if (!points.length) return null; // signing is optional
   const xs = points.map((point) => point[0]);
   const ys = points.map((point) => point[1]);
   const pad = 6;

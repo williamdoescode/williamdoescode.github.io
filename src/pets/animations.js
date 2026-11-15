@@ -4,6 +4,9 @@
 //   root  whole pet          body  torso, turning on the hip
 //   head  tail               fa/fb front legs (near/far)   ba/bb back legs
 //   flash white hit-flash    fx    sleeping "z" glyphs [x, y, size]
+//
+// rig.js adds in-between poses: `tween` frames per keyframe (default 3),
+// eased unless `linear` is set. `ms` is the time from one keyframe to the next.
 
 const RUN_LEGS = [-35, -15, 10, 35, 15, -10];
 const run = RUN_LEGS.map((_, i) => ({
@@ -62,7 +65,7 @@ export const ANIMATIONS = {
       { tail: -15 },
     ],
   },
-  run: { ms: 90, loop: true, frames: run },
+  run: { ms: 90, loop: true, tween: 2, linear: true, frames: run },
   sitting: {
     ms: 280,
     loop: true,
@@ -71,6 +74,7 @@ export const ANIMATIONS = {
   sleep: {
     ms: 480,
     loop: true,
+    tween: 4,
     frames: [
       { ...lying, head: [0, 4, 25], fx: [[39, 25, 3]] },
       { ...lying, head: [0, 5, 25], fx: [[39, 25, 3], [42, 19, 4]] },
@@ -81,6 +85,8 @@ export const ANIMATIONS = {
   jump: {
     ms: 85,
     loop: false,
+    tween: 2,
+    linear: true,
     frames: [
       { body: [0, 2, 0], head: [0, 1, 5], tail: -10 },
       { root: [0, -4, -8], ...airborne },
@@ -95,6 +101,7 @@ export const ANIMATIONS = {
   attack: {
     ms: 80,
     loop: false,
+    tween: 2,
     frames: [
       { root: [-2, 0, 0], body: [0, 1, 4], head: 8, tail: 20 },
       { root: [-3, 0, 0], body: [0, 1, 5], head: 10, tail: 25 },
@@ -107,6 +114,7 @@ export const ANIMATIONS = {
   hurt: {
     ms: 80,
     loop: false,
+    tween: 2,
     frames: [
       { root: [-1, 0, 0], body: [0, 0, -6], head: -18, tail: -30, flash: 1 },
       recoil,

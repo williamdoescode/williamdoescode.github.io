@@ -9,7 +9,9 @@ const PAGE = 24;
 const DRAG_START = 6; // pixels of movement before a press becomes a drag
 
 function VisitorCard({ pet, onGrab }) {
-  const { roaming, mine, isAdmin, place, unplace, removePet, close } = usePets();
+  const { roaming, keys, isAdmin, place, unplace, removePet, close, openEditor } =
+    usePets();
+  const mine = pet.id in keys;
   const skin = useSkin(pet);
   const [hover, setHover] = useState(false);
   const out = roaming.some((entry) => entry.id === pet.id);
@@ -27,7 +29,7 @@ function VisitorCard({ pet, onGrab }) {
           onPointerDown: (event) => skin && onGrab(pet, skin, event),
         }}
       >
-        {mine.includes(pet.id) && <span className="pet-card-badge">Yours</span>}
+        {mine && <span className="pet-card-badge">Yours</span>}
         <div className="pet-card-actions">
           {out ? (
             <button type="button" onClick={() => unplace(pet.id)}>
@@ -42,6 +44,11 @@ function VisitorCard({ pet, onGrab }) {
               }}
             >
               <Icon name="solid fa-paw" /> Let loose
+            </button>
+          )}
+          {mine && (
+            <button type="button" onClick={() => openEditor(pet)}>
+              <Icon name="solid fa-pencil" /> Edit
             </button>
           )}
           {isAdmin && (
@@ -127,7 +134,11 @@ export default function VisitorsPanel() {
                 Show more
               </button>
             )}
-            <button className="button button-primary" type="button" onClick={openEditor}>
+            <button
+              className="button button-primary"
+              type="button"
+              onClick={() => openEditor()}
+            >
               Create your pet <Icon name="solid fa-paintbrush" />
             </button>
           </div>

@@ -46,11 +46,12 @@ React needs a development server or production build; opening `index.html` direc
 
 ## Visitor pets
 
-Visitors can paint a 32×32 dog or cat, name it, sign its card, and let it roam the page. Every pet appears in the Visitors panel (paw button, or the footer link, or `#visitors`), and anyone can drag any pet onto the page.
+Visitors can paint a 32×32 dog or cat, name it, optionally sign its card, and let it roam the page. Every pet appears in the Visitors panel (paw button, or the footer link, or `#visitors`), and anyone can drag any pet onto the page.
 
-- **One painting, ten animations.** `src/pets/rig.js` cuts the painting into head, body, legs, and tail, and `src/pets/animations.js` re-poses those parts for Idle, Idle 2, Run, Sitting, Sleep, Jump, Attack, Hurt, Die, and Die 2. Visitors never draw frames.
+- **One painting, ten animations.** `src/pets/rig.js` cuts the painting into head, body, legs, and tail, and `src/pets/animations.js` re-poses those parts for Idle, Idle 2, Run, Sitting, Sleep, Jump, Attack, Hurt, Die, and Die 2. Visitors never draw frames. Frames are drawn at twice the painted resolution with in-between poses added automatically, and cats are shown slightly smaller than dogs (`SPECIES_SCALE`). All of this happens when a pet is displayed, so it applies to every pet already saved.
 - **Storage is a small PHP script, no database.** `public/pets-api/pets.php` (PHP 8.1+) writes `data/pets.json`, `data/pets/{id}.json`, and `data/pets/{id}.png` next to itself. It creates `data/` on the first save, validates every upload, and rate-limits by salted IP hash.
-- **Which pets roam is per visitor** (saved in their browser). First-time visitors see the three newest pets.
+- **Which pets roam is per visitor** (saved in their browser). Nothing roams until a visitor lets a pet loose.
+- **Visitors can edit their own pets.** Saving a pet returns an edit token that stays in that visitor's browser; the server keeps only its hash in `data/private/tokens.json`. Pets saved before tokens existed have none, so the first edit claims them. The site only shows Edit to the browser that created the pet, but a hand-written request could claim such a pet first.
 - **Without the API the feature hides itself**, so the site still works on a static host.
 
 ### Run it locally

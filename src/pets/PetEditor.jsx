@@ -5,8 +5,8 @@ import PetCard from "./PetCard.jsx";
 import PetSprite from "./PetSprite.jsx";
 import { SignaturePad } from "./Signature.jsx";
 import { usePets } from "./PetProvider.jsx";
-import { createPet } from "./api.js";
-import { skinToPng } from "./sprites.js";
+import { createPet, updatePet } from "./api.js";
+import { loadSkin, skinToPng } from "./sprites.js";
 import { SIZE } from "./rig.js";
 import { SPECIES, TEMPLATES } from "./templates.js";
 import { ANIMATIONS, ANIMATION_LABELS, ANIMATION_NAMES } from "./animations.js";
@@ -259,23 +259,40 @@ function Preview({ skin, species }) {
   );
 }
 
-/** Paint a pet, then name and sign its card, then save it for everyone. */
+/**
+ * Paint a pet, then name and (optionally) sign its card, then save it for
+ * everyone. Opened on one of the visitor's own pets, it edits that pet instead.
+ */
 export default function PetEditor() {
-  const { addPet, place, close, openVisitors } = usePets();
+  const { savePet, editing, keys, place, close, openVisitors } = usePets();
   const [step, setStep] = useState("paint"); // paint → card → done
-  const [species, setSpecies] = useState("dog");
-  const [skin, setSkin] = useState(() => new Uint8ClampedArray(TEMPLATES.dog));
-  const [touched, setTouched] = useState(false);
-  const [name, setName] = useState("");
-  const [signature, setSignature] = useState([]);
+  const [species, setSpecies] = useState(editing?.species || "dog");
+  const [skin, setSkin] = useState(() =>
+    editing ? null : new Uint8ClampedArray(TEMPLATES.dog),
+  );
+  const [touched, setTouched] = useState(Boolean(editing));
+  const [name, setName] = useState(editing?.name || "");
+  const [signature, setSignature] = useState(editing?.signature || []);
   const [website, setWebsite] = useState(""); // honeypot: people never see it
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(null);
 
+  // Editing starts from the saved painting.
+  useEffect(() => {
+    if (!editing) return;
+    let live = true;
+    loadSkin(editing).then(
+      (data) => live && setSkin(new Uint8ClampedArray(data)),
+      () => live && setError("Could not load the painting. Please try again."),
+    );
+    return () => {
+      live = false;
+    };
+  }, [editing]);
+
   let painted = 0;
-  for (let i = 3; i < skin.length; i += 4) if (skin[i]) painted++;
-  const signed = signature.reduce((total, stroke) => total + stroke.length, 0) >= 4;
+  for (let i = 3; skin && i < skin.length; i += 4) if (skin[i]) painted++;
 
   function chooseSpecies(next) {
     setSpecies(next);
@@ -287,14 +304,17 @@ export default function PetEditor() {
     setSaving(true);
     setError("");
     try {
-      const pet = await createPet({
+      const details = {
         species,
         name: name.trim(),
         skin: skinToPng(skin),
         signature,
         website,
-      });
-      addPet(pet, skin);
+      };
+      const { pet, token } = editing
+        ? await updatePet(editing.id, keys[editing.id] || "", details)
+        : await createPet(details);
+      savePet(pet, token, skin);
       setSaved(pet);
       setStep("done");
     } catch (failure) {
@@ -306,12 +326,16 @@ export default function PetEditor() {
 
   if (step === "done")
     return (
-      <Modal title={`${saved.name} has moved in`} eyebrow="SAVED" onClose={close}>
+      <Modal
+        title={`${saved.name} ${editing ? "has a new look" : "has moved in"}`}
+        eyebrow="SAVED"
+        onClose={close}
+      >
         <div className="pet-modal-body pet-done">
           <PetCard pet={saved} skin={skin} animation="idle2" />
           <p className="pet-lede">
-            {saved.name} is on the visitors page now, where anyone can drag it
-            onto the portfolio.
+            {saved.name} is on the visitors page, where anyone can drag it onto
+            the portfolio. You can edit it any time from this browser.
           </p>
           <div className="pet-modal-actions">
             <button className="button button-quiet" type="button" onClick={openVisitors}>
@@ -334,7 +358,7 @@ export default function PetEditor() {
 
   if (step === "card")
     return (
-      <Modal title="Name and sign" eyebrow="STEP 2 OF 2" onClose={close}>
+      <Modal title="Name its card" eyebrow="STEP 2 OF 2" onClose={close}>
         <form className="pet-modal-body pet-card-form" onSubmit={save}>
           <div className="pet-card-stage">
             <PetSprite skin={skin} species={species} animation="sitting" size={144} />
@@ -353,7 +377,7 @@ export default function PetEditor() {
               />
             </label>
             <div>
-              <span className="eyebrow">YOUR SIGNATURE</span>
+              <span className="eyebrow">YOUR SIGNATURE (OPTIONAL)</span>
               <SignaturePad strokes={signature} onChange={setSignature} />
             </div>
             <input
@@ -367,7 +391,8 @@ export default function PetEditor() {
               onChange={(event) => setWebsite(event.target.value)}
             />
             <p className="pet-note">
-              Your pet, its name, and your signature will be public on this site.
+              Your pet, its name, and your signature (if you add one) will be
+              public on this site.
             </p>
             {error && (
               <p className="pet-error" role="alert">
@@ -386,9 +411,9 @@ export default function PetEditor() {
             <button
               className="button button-primary"
               type="submit"
-              disabled={saving || !name.trim() || !signed}
+              disabled={saving || !name.trim()}
             >
-              {saving ? "Saving…" : "Save my pet"}
+              {saving ? "Saving…" : editing ? "Save changes" : "Save my pet"}
             </button>
           </div>
         </form>
@@ -396,8 +421,17 @@ export default function PetEditor() {
     );
 
   return (
-    <Modal title="Paint your pet" eyebrow="STEP 1 OF 2" onClose={close}>
+    <Modal
+      title={editing ? `Edit ${editing.name}` : "Paint your pet"}
+      eyebrow="STEP 1 OF 2"
+      onClose={close}
+    >
       <div className="pet-modal-body">
+        {!skin && (
+          <p className="pet-empty" role="status">
+            {error || "Fetching the painting."}
+          </p>
+        )}
         <div className="pet-species" role="group" aria-label="Species">
           {SPECIES.map((kind) => (
             <button
@@ -410,6 +444,7 @@ export default function PetEditor() {
             </button>
           ))}
         </div>
+        {skin && (
         <div className="pet-editor">
           <Painter
             skin={skin}
@@ -421,6 +456,7 @@ export default function PetEditor() {
           />
           <Preview skin={skin} species={species} />
         </div>
+        )}
         <p className="pet-note">
           Paint over the template or start blank. The faint outline shows where
           the head, legs, and tail go, so every animation fits your drawing.
@@ -432,7 +468,7 @@ export default function PetEditor() {
             disabled={painted < MIN_PIXELS}
             onClick={() => setStep("card")}
           >
-            Next: name and sign <Icon name="solid fa-arrow-right" />
+            Next: name its card <Icon name="solid fa-arrow-right" />
           </button>
         </div>
       </div>
