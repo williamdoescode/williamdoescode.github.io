@@ -36,7 +36,7 @@
 .pet-layer {
   position: fixed;
   inset: 0;
-  z-index: 25;
+  z-index: 32; /* in front of the mini music player, so it never hides a pet */
   overflow: hidden;
   pointer-events: none;
 }
@@ -137,8 +137,12 @@
 .pet-invite > * {
   pointer-events: auto;
 }
-/* On phones the mini player spans the bottom edge, so sit above it. */
+/* On phones the mini player spans the bottom edge, so the paw button sits
+   above it and the pets walk along its top. */
 @media (max-width: 860px) {
+  body:has(.mini-player:not([data-hidden])) .pet-layer {
+    bottom: calc(max(16px, env(safe-area-inset-bottom)) + 58px);
+  }
   body:has(.mini-player:not([data-hidden])) .pet-invite {
     bottom: calc(max(16px, env(safe-area-inset-bottom)) + 68px);
   }

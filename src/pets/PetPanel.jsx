@@ -14,6 +14,19 @@ export default function PetPanel() {
 
   return (
     <div className="pet-panel">
+      <div className="pg-invite">
+        <div>
+          <span className="eyebrow">ROOM TO RUN</span>
+          <h4>Playground</h4>
+          <p>
+            A field with trees, a ball, yarn, and a scratch pole. Put the pets
+            in and watch them play. The music keeps going.
+          </p>
+        </div>
+        <a className="button button-primary" href="#playground">
+          Proceed to Playground <Icon name="solid fa-arrow-right" />
+        </a>
+      </div>
       <section className="pet-group" aria-labelledby="owner-pets-title">
         <header className="pet-group-head">
           <div>

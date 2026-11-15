@@ -58,6 +58,16 @@ The Entertainment section has a Pets area below the music player. It shows Willi
 - **Visitors can edit their own pets.** Saving a pet returns an edit token that stays in that visitor's browser; the server keeps only its hash in `data/private/tokens.json`. Pets saved before tokens existed have none, so the first edit claims them. The site only shows Edit to the browser that created the pet, but a hand-written request could claim such a pet first.
 - **Without the API only William's pets show.** Creating, likes, and the Visitors panel hide themselves, so the site still works on a static host.
 
+### Playground
+
+**Proceed to Playground** in the Pets area swaps the whole page for a field with trees (`#playground`; **Go back to Main Page** or the browser's Back button returns to where the visitor was). The code is in `src/pets/playground/`.
+
+- Pets wander, nap, and play on their own. Dogs mostly chase the ball, cats mostly bat the yarn and scratch the pole, and each naps by its own kind of house. `sim.js` holds those habits (`WISHES`) and the toy physics (`TOYS`).
+- Visitors can click a pet to hear it, click or throw a toy (nearby pets run after it), drag anything to move it, add things from the shelf, and drop a thing on the shelf to put it away. The shelf also chooses which pets are in the field (up to 12).
+- The dog house, cat house, scratch pole, ball, yarn, and trees are painted in code in `art.js`.
+- The layout is saved in each visitor's own browser; it is not shared between visitors.
+- Music keeps playing because the portfolio stays loaded underneath. While a YouTube song plays, its player sits in the corner of the playground at the 200×200 YouTube requires.
+
 ### Run it locally
 
 ```sh

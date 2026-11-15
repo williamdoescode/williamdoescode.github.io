@@ -4,10 +4,16 @@ import { draw } from "./templates.js";
 
 const INK = "#120d0c";
 
+// The outline is added one pixel outside every shape, and the rig decides
+// which part a pixel moves with by where it sits (see partAt in rig.js). So
+// keep an upright tail at column 4 or less, the body between columns 7 and
+// 24, and the head from column 20: then each outline moves with its own
+// part instead of being left behind as a stray line.
+
 // [far legs, then near legs], each `wide` pixels across, from row `top` down.
 const legs = (near, far, wide = 3, top = 24) => [
   [12, top, 11 + wide, 30, far],
-  [22, top, 21 + wide, 30, far],
+  [22, top, Math.min(21 + wide, 24), 30, far], // column 25 would touch the head's edge
   [7, top, 6 + wide, 30, near],
   [17, top, 16 + wide, 30, near],
 ];
@@ -24,13 +30,13 @@ function rottweiler() {
       [22, 29, 25, 30, tanShade],
       [7, 28, 10, 30, tan],
       [17, 28, 20, 30, tan],
-      [6, 14, 25, 23, coat], // a broad, heavy body
-      [7, 13, 24, 13, coat],
-      [8, 13, 20, 13, "#4b4852"], // sheen along the back
-      [22, 18, 25, 22, tan], // chest patch
-      [4, 14, 5, 16, coat], // docked tail
-      [19, 6, 28, 15, coat], // wide head
-      [20, 5, 27, 5, coat],
+      [7, 14, 24, 23, coat], // a broad, heavy body
+      [8, 13, 23, 13, coat],
+      [9, 13, 20, 13, "#4b4852"], // sheen along the back
+      [21, 18, 24, 22, tan], // chest patch
+      [5, 14, 6, 16, coat], // docked tail
+      [20, 6, 28, 15, coat], // wide head
+      [21, 5, 27, 5, coat],
       [27, 10, 30, 14, coat], // muzzle, tan underneath
       [27, 12, 30, 14, tan],
       [25, 13, 26, 14, tan],
@@ -124,10 +130,10 @@ function husky() {
       [9, 21, 24, 23, white], // white belly and chest
       [21, 17, 24, 20, white],
       [3, 13, 6, 15, grey], // bushy tail curled over the back
-      [2, 9, 5, 13, grey],
-      [3, 7, 5, 9, grey],
-      [2, 10, 2, 12, white],
-      [4, 7, 5, 8, white],
+      [1, 9, 4, 13, grey],
+      [2, 7, 4, 9, grey],
+      [1, 10, 1, 12, white],
+      [3, 7, 4, 8, white],
       [20, 7, 28, 15, grey], // head
       [21, 6, 27, 6, grey],
       [21, 6, 27, 7, dark],
@@ -152,14 +158,15 @@ function chowChow() {
   return draw(
     [
       ...legs(red, dark, 4),
-      [6, 12, 25, 24, red], // a big ball of fluff
-      [7, 11, 24, 11, red],
-      [6, 19, 9, 24, light], // fluffy breeches
+      [7, 12, 24, 24, red], // a big ball of fluff
+      [8, 11, 23, 11, red],
+      [7, 19, 9, 24, light], // fluffy breeches
       [11, 23, 20, 24, light],
       [17, 10, 23, 20, light], // mane
-      [3, 9, 5, 14, light], // tail curled onto the back
-      [2, 10, 2, 13, light],
-      [4, 8, 5, 8, light],
+      [5, 13, 6, 14, light], // tail curled onto the back
+      [2, 9, 4, 14, light],
+      [1, 10, 1, 13, light],
+      [3, 8, 4, 8, light],
       [20, 5, 29, 15, red], // large round head
       [21, 4, 28, 4, red],
       [21, 12, 25, 15, light],
@@ -194,10 +201,10 @@ function aspin() {
       [20, 17, 21, 17, orange],
       [8, 20, 8, 21, orange],
       [5, 14, 6, 16, white], // tail curled up
-      [3, 11, 5, 14, white],
-      [3, 9, 4, 11, white],
-      [4, 8, 5, 9, white],
-      [3, 12, 4, 13, orange],
+      [2, 11, 4, 14, white],
+      [2, 9, 3, 11, white],
+      [3, 8, 4, 9, white],
+      [2, 12, 3, 13, orange],
       [20, 7, 28, 15, white], // head
       [21, 6, 27, 6, white],
       [27, 10, 30, 14, white],

@@ -1,0 +1,411 @@
+/* The playground: a full-page field that replaces the portfolio while open. */
+
+/* The portfolio stays mounted underneath (so the music keeps playing) but is
+   out of sight and out of reach. */
+html[data-view="playground"] .site-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 29;
+  width: auto;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+html[data-view="playground"] :is(.pet-layer, .pet-invite, .skip-link, .lyric-stage) {
+  display: none;
+}
+/* YouTube's player has to stay on screen while it plays, so it moves to
+   the corner of the playground at its required 200×200. */
+html[data-view="playground"] .video-embed:not([hidden]):not(:empty) {
+  position: fixed;
+  inset: 78px 14px auto auto;
+  width: 200px;
+  height: 200px;
+  visibility: visible;
+  border: 1px solid var(--line);
+}
+
+.playground {
+  --grass: #2c5b39;
+  --pet-display: "Jersey 15", var(--sans);
+  --pet-label: "Silkscreen", var(--mono);
+  position: fixed;
+  inset: 0;
+  z-index: 28;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  animation: enter 0.3s ease both;
+}
+:root[data-theme="light"] .playground {
+  --grass: #7cc36a;
+}
+/* Leave room for the mini music player so it never covers the shelf. */
+body:has(.mini-player:not([data-hidden])) .playground {
+  padding-bottom: calc(max(16px, env(safe-area-inset-bottom)) + 68px);
+}
+.playground .eyebrow {
+  font: 400 10.5px/1.6 var(--pet-label);
+  letter-spacing: 0.6px;
+}
+.playground .button {
+  min-height: 38px;
+  padding: 6px 13px;
+  font: 400 18px/1.4 var(--pet-display);
+  letter-spacing: 0.2px;
+}
+
+/* ───────── Top bar ───────── */
+.pg-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.pg-title {
+  margin-right: auto;
+  line-height: 1;
+}
+.pg-title h1 {
+  margin: 0;
+  font: 400 30px/1 var(--pet-display);
+  letter-spacing: 0;
+}
+.pg-bar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ───────── Field ───────── */
+.pg-field {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--grass);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.pg-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  background-size: 96px 96px;
+  image-rendering: pixelated;
+}
+.pg-world img {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+/* Everything in the world is placed by its base point on the grass. */
+.pg-tree,
+.pg-pet,
+.pg-thing {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.pg-pet,
+.pg-thing {
+  width: 0;
+  height: 0;
+}
+.pg-shadow {
+  position: absolute;
+  left: -22px;
+  top: -5px;
+  width: 44px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0000003d;
+}
+.pg-hint {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  translate: -50% 0;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  margin: 0;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: #0b090a99;
+  color: #fffcf2;
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: center;
+  pointer-events: none;
+  animation: pg-hint 9s ease forwards;
+}
+@keyframes pg-hint {
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ───────── Pets ───────── */
+.pg-pet .pet-sprite {
+  position: absolute;
+  left: -48px;
+  top: -96px;
+  width: 96px;
+  height: 96px;
+}
+.pg-pet-hit {
+  position: absolute;
+  left: -30px;
+  top: -58px;
+  width: 60px;
+  height: 58px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  cursor: grab;
+  touch-action: none;
+}
+.pg-pet-hit:active {
+  cursor: grabbing;
+}
+.pg-pet .pet-say {
+  bottom: 86px;
+}
+.pg-tag {
+  position: absolute;
+  left: 0;
+  bottom: 62px;
+  translate: -50% 4px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #0b090acc;
+  color: #fffcf2;
+  font: 400 15px/1.5 var(--pet-display);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.15s,
+    translate 0.15s;
+}
+.pg-pet:hover .pg-tag,
+.pg-pet:focus-within .pg-tag,
+.pg-pet[data-tagged] .pg-tag {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+/* ───────── Things ───────── */
+.pg-thing-body {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  cursor: grab;
+  touch-action: none;
+}
+.pg-thing-body:active {
+  cursor: grabbing;
+}
+.pg-thing[data-held] .pg-thing-body {
+  filter: drop-shadow(0 6px 4px #0005);
+}
+.pg-thing[data-shake] img {
+  transform-origin: 50% 100%;
+  animation: pg-shake 0.42s ease;
+}
+@keyframes pg-shake {
+  20% {
+    transform: rotate(-6deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+  80% {
+    transform: rotate(-2deg);
+  }
+}
+.pg-ghost {
+  position: fixed;
+  z-index: 70;
+  translate: -50% -70%;
+  image-rendering: pixelated;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 6px #0006);
+}
+
+/* ───────── Shelf ───────── */
+.pg-shelf {
+  display: flex;
+  gap: 10px 22px;
+  padding: 10px 16px 12px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  transition: background 0.15s;
+}
+.pg-shelf[data-away] {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+}
+.pg-shelf-group {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  min-width: 0;
+}
+.pg-shelf-pets {
+  flex: 1;
+}
+.pg-things,
+.pg-roster {
+  display: flex;
+  gap: 6px;
+}
+.pg-roster {
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.pg-things button,
+.pg-roster button {
+  flex: none;
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  gap: 2px;
+  min-width: 70px;
+  height: 78px;
+  padding: 6px 8px 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--muted);
+  font: 400 15px/1.2 var(--pet-display);
+  white-space: nowrap;
+  touch-action: none;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+}
+.pg-roster button {
+  touch-action: auto;
+}
+.pg-things button:hover:not(:disabled),
+.pg-roster button:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--muted);
+}
+.pg-things button:disabled,
+.pg-roster button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.pg-roster button[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.pg-things img {
+  max-width: 44px;
+  max-height: 42px;
+  width: auto;
+  height: auto;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+.pg-roster .pet-sprite {
+  width: 60px;
+  height: 60px;
+  margin: -14px 0 -2px;
+}
+
+/* ───────── The way in, in the Entertainment section ───────── */
+.pg-invite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background:
+    linear-gradient(to top, color-mix(in srgb, #4f9a55 26%, transparent), transparent 70%),
+    var(--surface);
+}
+.pg-invite h4 {
+  margin: 2px 0 2px;
+  font: 400 27px/1.2 var(--pet-display);
+}
+.pg-invite p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .pg-bar {
+    padding: 8px 12px;
+  }
+  .pg-title {
+    order: -1;
+    width: 100%;
+  }
+  .pg-title .eyebrow {
+    display: none;
+  }
+  .pg-title h1 {
+    font-size: 26px;
+  }
+  .pg-bar-actions {
+    margin-left: auto;
+  }
+  .playground .button {
+    min-height: 34px;
+    padding: 4px 10px;
+    font-size: 16px;
+  }
+  .pg-shelf {
+    flex-direction: column;
+    padding: 8px 12px 10px;
+  }
+  .pg-things {
+    overflow-x: auto;
+  }
+  .pg-things button,
+  .pg-roster button {
+    min-width: 62px;
+    height: 68px;
+    font-size: 14px;
+  }
+  .pg-things img {
+    max-height: 34px;
+  }
+  .pg-roster .pet-sprite {
+    width: 52px;
+    height: 52px;
+    margin-top: -12px;
+  }
+  .pg-hint {
+    font-size: 11.5px;
+  }
+  html[data-view="playground"] .video-embed:not([hidden]):not(:empty) {
+    inset: 96px 8px auto auto;
+  }
+}
+@media print {
+  .playground {
+    display: none;
+  }
+}

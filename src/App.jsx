@@ -7,6 +7,7 @@ import LyricsBackdrop from "./music/LyricsBackdrop.jsx";
 import MiniPlayer from "./music/MiniPlayer.jsx";
 import { PetProvider, VisitorsLink } from "./pets/PetProvider.jsx";
 import PetPanel from "./pets/PetPanel.jsx";
+import Playground from "./pets/playground/Playground.jsx";
 import {
   asset,
   email,
@@ -469,6 +470,29 @@ export default function App() {
   );
   const [project, setProject] = useState(null);
   const trigger = useRef(null);
+  // The playground takes over the page at #playground, so Back leaves it.
+  const [playground, setPlayground] = useState(() => location.hash === "#playground");
+  const scrollBack = useRef(null);
+  useEffect(() => {
+    const sync = () => {
+      const open = location.hash === "#playground";
+      if (open) scrollBack.current = window.scrollY;
+      setPlayground(open);
+    };
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
+  const inPlayground = playground && !introOpen;
+  useEffect(() => {
+    document.documentElement.dataset.view = inPlayground ? "playground" : "main";
+    if (inPlayground) return;
+    // Back on the main page: return to where the visitor left it.
+    if (scrollBack.current !== null)
+      window.scrollTo({ top: scrollBack.current, behavior: "instant" });
+    else if (location.hash === "#pets")
+      document.getElementById("pets")?.scrollIntoView({ behavior: "instant" });
+    scrollBack.current = null;
+  }, [inPlayground]);
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
     document.querySelector('meta[name="theme-color"]').content =
@@ -492,7 +516,7 @@ export default function App() {
         Skip to content
       </a>
       <LyricsBackdrop />
-      <div className="site-shell" inert={introOpen}>
+      <div className="site-shell" inert={introOpen || inPlayground}>
         <Header
           theme={theme}
           onToggle={() =>
@@ -593,6 +617,7 @@ export default function App() {
           </a>
         </footer>
       </div>
+      {inPlayground && <Playground onExit={() => (location.hash = "#pets")} />}
       <MiniPlayer />
       {introOpen && <Intro onFinish={finishIntro} />}
       {project && (
