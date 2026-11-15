@@ -2,3 +2,7 @@
 dist/
 *.local
 .DS_Store
+
+# Visitor pets saved while developing (the live data lives on the server)
+public/pets-api/data/
+docs/pets-api/data/

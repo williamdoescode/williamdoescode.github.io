@@ -1,0 +1,636 @@
+/* Visitor pets: sprites, the roaming layer, the invite, and the modals. */
+
+.pet-sprite {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  pointer-events: none;
+}
+
+/* ───────── Pets roaming along the bottom of the window ───────── */
+.pet-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  overflow: hidden;
+  pointer-events: none;
+}
+.roaming-pet {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 96px;
+  height: 96px;
+  will-change: translate;
+}
+.roaming-pet .pet-sprite {
+  width: 96px;
+  height: 96px;
+  filter: drop-shadow(0 2px 0 #0004);
+}
+/* Only the pet itself takes clicks, not the empty frame around it. */
+.roaming-pet-hit {
+  position: absolute;
+  left: 18px;
+  bottom: 0;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  cursor: grab;
+  touch-action: none;
+  pointer-events: auto;
+}
+.roaming-pet-hit:active {
+  cursor: grabbing;
+}
+.roaming-pet-hit:focus-visible {
+  outline-offset: 0;
+}
+.roaming-pet-tag {
+  position: absolute;
+  left: 50%;
+  bottom: 70px;
+  translate: -50% 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 180px;
+  padding: 2px 4px 2px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: 500 11px/1.8 var(--mono);
+  white-space: nowrap;
+  user-select: none;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.15s,
+    translate 0.15s;
+}
+.roaming-pet:hover .roaming-pet-tag,
+.roaming-pet:focus-within .roaming-pet-tag,
+.roaming-pet[data-tagged] .roaming-pet-tag {
+  opacity: 1;
+  translate: -50% 0;
+  pointer-events: auto;
+}
+.roaming-pet-tag button {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  font-size: 11px;
+}
+.roaming-pet-tag button:hover {
+  background: var(--tint);
+  color: var(--text);
+}
+.roaming-pet-tag button:focus-visible {
+  outline-offset: 0;
+}
+
+/* ───────── Paw button and its nudge ───────── */
+.pet-invite {
+  position: fixed;
+  z-index: 31;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+}
+.pet-invite > * {
+  pointer-events: auto;
+}
+/* On phones the mini player spans the bottom edge, so sit above it. */
+@media (max-width: 860px) {
+  body:has(.mini-player:not([data-hidden])) .pet-invite {
+    bottom: calc(max(16px, env(safe-area-inset-bottom)) + 68px);
+  }
+}
+.pet-fab {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--accent);
+  font-size: 17px;
+  box-shadow: 0 14px 30px -14px #000c;
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
+  animation: pet-pop 0.4s ease both;
+}
+.pet-fab:hover {
+  transform: translateY(-2px) rotate(-8deg);
+  border-color: var(--accent);
+}
+.pet-bubble {
+  position: relative;
+  width: min(280px, calc(100vw - 32px));
+  padding: 14px 16px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px 14px 4px 14px;
+  background: var(--surface);
+  box-shadow: 0 22px 50px -22px #000d;
+  animation: pet-pop 0.25s ease both;
+}
+.pet-bubble p {
+  margin: 4px 0 12px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.pet-bubble-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pet-bubble-actions .button {
+  min-height: 36px;
+  padding: 6px 12px;
+}
+.pet-bubble-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+}
+.pet-bubble-close:hover {
+  color: var(--text);
+}
+@keyframes pet-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+}
+
+/* ───────── Modals ───────── */
+.pet-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: #0b090adb;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 0.2s;
+}
+/* While a pet is dragged out, the panel steps aside to show the page. */
+.pet-overlay[data-dragging] {
+  opacity: 0;
+  pointer-events: none;
+}
+.pet-modal {
+  width: min(800px, 100%);
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 30px 100px #0005;
+  animation: enter 0.25s ease both;
+}
+.pet-visitors .pet-modal {
+  width: min(900px, 100%);
+}
+.pet-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.pet-modal-header h2 {
+  font: 400 30px/1.1 var(--serif);
+  letter-spacing: -0.01em;
+}
+.pet-modal-body {
+  padding: 18px 24px 22px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.pet-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+.pet-modal-actions .button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.pet-lede {
+  color: var(--muted);
+  font-size: 14px;
+}
+.pet-note {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.pet-error {
+  margin-top: 10px;
+  color: #e5675f;
+  font-size: 13px;
+}
+.pet-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* Shared pressed-button look for species, tools, and animation chips. */
+.pet-species button,
+.pet-chips button,
+.pet-card-actions button,
+.painter-text {
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font: 500 11.5px/1.7 var(--mono);
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background 0.15s;
+}
+.pet-species button:hover,
+.pet-chips button:hover,
+.pet-card-actions button:hover,
+.painter-text:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+.pet-species button[aria-pressed="true"],
+.pet-chips button[aria-pressed="true"] {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+.pet-modal :focus-visible {
+  outline-offset: 2px;
+}
+
+/* ───────── Editor ───────── */
+.pet-species {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.pet-species button {
+  padding: 7px 16px;
+  font-size: 12.5px;
+}
+.pet-species i {
+  margin-right: 6px;
+}
+.pet-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 170px;
+  gap: 24px;
+  align-items: start;
+}
+.painter {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 181px;
+  gap: 16px;
+  align-items: start;
+}
+.painter-canvas {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  /* Checkerboard marks transparent pixels. */
+  background:
+    repeating-conic-gradient(var(--tint) 0 25%, var(--bg) 0 50%) 0 0 / 6.25% 6.25%;
+}
+.painter-canvas canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  touch-action: none;
+  cursor: crosshair;
+}
+.painter-canvas .painter-guide {
+  opacity: 0.22;
+  pointer-events: none;
+}
+/* Pixel grid, drawn over the painting. */
+.painter-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--text) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--text) 9%, transparent) 1px, transparent 1px);
+  background-size: 3.125% 3.125%;
+}
+.painter-tools {
+  display: grid;
+  gap: 12px;
+}
+.painter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.painter-row .icon-button {
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+}
+.painter-row .icon-button[aria-pressed="true"] {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+.painter-palette {
+  display: grid;
+  grid-template-columns: repeat(6, 26px);
+  gap: 5px;
+}
+.painter-palette button,
+.painter-custom {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.painter-palette button[aria-pressed="true"] {
+  outline: 2px solid var(--text);
+  outline-offset: 1px;
+}
+.painter-custom {
+  position: relative;
+  overflow: hidden;
+  background: conic-gradient(#e5675f, #f2c14e, #7fc46b, #4fa3d9, #7b5ea7, #e5675f);
+  cursor: pointer;
+}
+.painter-custom input {
+  position: absolute;
+  inset: -4px;
+  width: 200%;
+  height: 200%;
+  opacity: 0;
+  cursor: pointer;
+}
+.pet-preview {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+.pet-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+.pet-chips button {
+  padding: 2px 9px;
+  font-size: 10.5px;
+}
+
+/* ───────── Card and signature ───────── */
+.pet-card-stage {
+  width: fit-content;
+  display: grid;
+  place-items: end center;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background:
+    linear-gradient(to top, var(--tint) 14px, transparent 14px), var(--bg);
+}
+.pet-card-stage[data-draggable] {
+  cursor: grab;
+  touch-action: none;
+}
+.pet-card-stage[data-draggable]:hover {
+  border-color: var(--accent);
+}
+.pet-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 16px 14px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  text-align: center;
+}
+.pet-card h3 {
+  margin-top: 10px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 400 24px/1.2 var(--serif);
+}
+.pet-card-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--button-text);
+  font: 500 10px/1.9 var(--mono);
+  letter-spacing: 0.5px;
+}
+.pet-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+.pet-card-actions i {
+  margin-right: 4px;
+}
+.signature {
+  display: block;
+  width: 100%;
+  max-width: 210px;
+  aspect-ratio: 3;
+  color: var(--text);
+}
+.signature path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke: currentColor;
+  stroke-width: 1.8px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.signature-rule {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.signature-pad {
+  position: relative;
+  margin-top: 6px;
+}
+.signature-pad .signature {
+  max-width: none;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  cursor: crosshair;
+  touch-action: none;
+}
+.signature-hint {
+  position: absolute;
+  left: 22px;
+  bottom: 28%;
+  color: var(--muted);
+  font: italic 18px var(--serif);
+  pointer-events: none;
+}
+.signature-clear {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  padding: 2px 8px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: 500 11px var(--mono);
+}
+.signature-clear:hover {
+  color: var(--text);
+}
+.pet-card-form {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 20px 24px;
+  align-items: start;
+}
+.pet-card-form .pet-modal-actions {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+.pet-fields {
+  display: grid;
+  gap: 14px;
+}
+.pet-fields input[type="text"] {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 22px/1.3 var(--serif);
+}
+.pet-fields .pet-note {
+  margin-top: 0;
+}
+.pet-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.pet-done {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.pet-done .pet-card {
+  width: min(260px, 100%);
+}
+.pet-done .pet-modal-actions {
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ───────── Visitors grid ───────── */
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.pet-ghost {
+  position: fixed;
+  z-index: 70;
+  translate: -50% -65%;
+  pointer-events: none;
+  filter: drop-shadow(0 10px 8px #0006);
+}
+
+@media (max-width: 760px) {
+  .pet-editor,
+  .painter,
+  .pet-card-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .painter-canvas {
+    max-width: 360px;
+    width: 100%;
+    margin-inline: auto;
+  }
+  .painter-palette {
+    grid-template-columns: repeat(auto-fill, 26px);
+  }
+  .pet-card-form .pet-card-stage {
+    margin-inline: auto;
+  }
+  .pet-modal-header,
+  .pet-modal-body {
+    padding-inline: 16px;
+  }
+  .pet-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+@media print {
+  .pet-layer,
+  .pet-invite,
+  .pet-overlay {
+    display: none;
+  }
+}

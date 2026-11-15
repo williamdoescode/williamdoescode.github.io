@@ -44,6 +44,37 @@ React needs a development server or production build; opening `index.html` direc
 - `docs/`: committed production build served by GitHub Pages.
 - `public/.nojekyll`: disables Jekyll processing for the static build.
 
+## Visitor pets
+
+Visitors can paint a 32×32 dog or cat, name it, sign its card, and let it roam the page. Every pet appears in the Visitors panel (paw button, or the footer link, or `#visitors`), and anyone can drag any pet onto the page.
+
+- **One painting, ten animations.** `src/pets/rig.js` cuts the painting into head, body, legs, and tail, and `src/pets/animations.js` re-poses those parts for Idle, Idle 2, Run, Sitting, Sleep, Jump, Attack, Hurt, Die, and Die 2. Visitors never draw frames.
+- **Storage is a small PHP script, no database.** `public/pets-api/pets.php` (PHP 8.1+) writes `data/pets.json`, `data/pets/{id}.json`, and `data/pets/{id}.png` next to itself. It creates `data/` on the first save, validates every upload, and rate-limits by salted IP hash.
+- **Which pets roam is per visitor** (saved in their browser). First-time visitors see the three newest pets.
+- **Without the API the feature hides itself**, so the site still works on a static host.
+
+### Run it locally
+
+```sh
+npm run pets-api   # PHP built-in server on 127.0.0.1:8787
+npm run dev        # Vite proxies /pets-api to it
+```
+
+Pets saved while developing land in `public/pets-api/data/`, which is git-ignored.
+
+### Deploy
+
+- **cPanel:** nothing extra. The build copies `pets-api/` into `docs/`, and the normal deploy puts it beside the site. Deploys never touch `data/`, so saved pets survive.
+- **GitHub Pages** cannot run PHP. Host `pets-api/` on your cPanel domain or a subdomain, then build with the API address in `.env.production`:
+
+  ```sh
+  VITE_PETS_API=https://pets.example.com/pets-api/
+  ```
+
+### Moderation
+
+Create `pets-api/data/private/admin-token.txt` on the server containing a long random string. Then open the site at `#pets-admin`, enter the token, and each card in the Visitors panel gets a Delete button. Without that file, deleting is disabled.
+
 ## GitHub Pages
 
 Live site: https://williamdoescode.github.io/

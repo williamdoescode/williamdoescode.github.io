@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "npm run dev"
+    "deploy": "npm run dev",
+    "pets-api": "php -S 127.0.0.1:8787 -t public"
   },
   "dependencies": {
     "react": "19.3.0",

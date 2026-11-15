@@ -1,0 +1,11 @@
+# Visitor pets API (see pets.php). The portfolio may be served from another
+# origin (GitHub Pages), and it reads the pet paintings into a canvas, so the
+# PNG files need the CORS header too.
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+  <FilesMatch "\.png$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>

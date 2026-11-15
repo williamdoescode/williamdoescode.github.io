@@ -5,6 +5,7 @@ import { MusicProvider } from "./music/MusicProvider.jsx";
 import MusicPanel from "./music/MusicPanel.jsx";
 import LyricsBackdrop from "./music/LyricsBackdrop.jsx";
 import MiniPlayer from "./music/MiniPlayer.jsx";
+import { PetProvider, VisitorsLink } from "./pets/PetProvider.jsx";
 import {
   asset,
   email,
@@ -485,6 +486,7 @@ export default function App() {
   }
   return (
     <MusicProvider>
+      <PetProvider ready={!introOpen}>
       <a className="skip-link" href="#main" inert={introOpen}>
         Skip to content
       </a>
@@ -572,6 +574,7 @@ export default function App() {
             © {new Date().getFullYear()} William Velasco <span>/</span> Made
             with care.
           </p>
+          <VisitorsLink />
           <a href="#top">
             Back to top <Icon name="solid fa-arrow-up" />
           </a>
@@ -586,6 +589,7 @@ export default function App() {
           onClose={closeProject}
         />
       )}
+      </PetProvider>
     </MusicProvider>
   );
 }
