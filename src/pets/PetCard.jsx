@@ -8,16 +8,27 @@ const date = (iso) =>
     day: "numeric",
   });
 
-/** A pet's signed card: sprite, name, species, date, and signature. */
-export default function PetCard({ pet, skin, animation = "idle", stage, children }) {
+/**
+ * A pet's card: sprite, name, breed or species, date, and signature.
+ * `bubble` is drawn over the sprite (what the pet is saying).
+ */
+export default function PetCard({
+  pet,
+  skin,
+  animation = "idle",
+  stage,
+  bubble,
+  children,
+}) {
   return (
     <article className="pet-card">
       <div className="pet-card-stage" {...stage}>
         <PetSprite skin={skin} species={pet.species} animation={animation} />
+        {bubble}
       </div>
       <h3>{pet.name}</h3>
       <span className="eyebrow">
-        {pet.species.toUpperCase()}
+        {(pet.breed || pet.species).toUpperCase()}
         {pet.createdAt && ` · ${date(pet.createdAt).toUpperCase()}`}
       </span>
       <Signature strokes={pet.signature} />

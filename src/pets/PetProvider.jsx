@@ -6,7 +6,8 @@ import {
   useMemo,
   useState,
 } from "react";
-import { deletePet, listPets } from "./api.js";
+import { deletePet, likePet, listPets } from "./api.js";
+import { OWNER_PETS, OWNER_SKINS } from "./owner.js";
 import { rememberSkin } from "./sprites.js";
 import PetInvite from "./PetInvite.jsx";
 import PetEditor from "./PetEditor.jsx";
@@ -16,7 +17,12 @@ import PetLayer from "./PetLayer.jsx";
 const PLACED_KEY = "portfolio-pets-placed";
 const MINE_KEY = "portfolio-pets-mine"; // ids only, from before edit tokens
 const KEYS_KEY = "portfolio-pets-keys"; // { petId: editToken }
+const LIKED_KEY = "portfolio-pets-liked"; // ids this visitor has liked
+const VISITOR_KEY = "portfolio-pets-visitor"; // random id, so a like counts once
 const MAX_PLACED = 12;
+
+// William's pets are painted in code, so their paintings are ready at once.
+for (const pet of OWNER_PETS) rememberSkin(pet, OWNER_SKINS[pet.skin]);
 
 function read(key) {
   try {
@@ -43,17 +49,31 @@ function store(key, value) {
     /* Still works for this visit. */
   }
 }
+function visitorId() {
+  const saved = read(VISITOR_KEY);
+  if (typeof saved === "string" && /^[a-f0-9]{32}$/.test(saved)) return saved;
+  const id = Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
+  store(VISITOR_KEY, id);
+  return id;
+}
 
 const PetContext = createContext(null);
 export const usePets = () => useContext(PetContext);
 
 /**
- * Visitor pets: loads everyone's pets, remembers which ones this visitor let
- * loose on the page (none until they choose some), and mounts the invite, editor, visitors panel, and the
- * roaming layer. If the pets API is unreachable the whole feature stays hidden.
+ * Pets: William's own (built in) and visitors' (from the pets API). Remembers
+ * which ones this visitor let loose on the page (none until they choose some)
+ * and which they liked, and mounts the invite, editor, visitors panel, and
+ * the roaming layer. If the API is unreachable, only William's pets show and
+ * the visitor features (creating, likes, the visitors panel) stay hidden.
  */
 export function PetProvider({ ready, children }) {
-  const [pets, setPets] = useState(null);
+  const [pets, setPets] = useState(null); // visitors' pets; null while offline
+  const [likes, setLikes] = useState({}); // pet id → count
+  const [liked, setLiked] = useState(() => stored(LIKED_KEY) || []);
+  const [visitor] = useState(visitorId);
   const [view, setView] = useState(null); // "editor" | "visitors"
   const [editing, setEditing] = useState(null); // the pet being edited, if any
   // Entries are { id, n, at }: n re-mounts a pet that is dropped again, and
@@ -69,7 +89,8 @@ export function PetProvider({ ready, children }) {
     listPets().then(
       (list) => {
         if (!live) return;
-        setPets(list);
+        setPets(list.pets);
+        setLikes(list.likes);
         if (location.hash === "#visitors") setView("visitors");
         if (location.hash === "#pets-admin") {
           const token = window.prompt("Pets admin token");
@@ -87,9 +108,9 @@ export function PetProvider({ ready, children }) {
   }, []);
 
   const roaming = useMemo(() => {
-    if (!pets) return [];
+    const everyone = [...OWNER_PETS, ...(pets || [])];
     return placed
-      .map((entry) => ({ ...entry, pet: pets.find((pet) => pet.id === entry.id) }))
+      .map((entry) => ({ ...entry, pet: everyone.find((pet) => pet.id === entry.id) }))
       .filter((entry) => entry.pet);
   }, [pets, placed]);
 
@@ -137,18 +158,47 @@ export function PetProvider({ ready, children }) {
     [adminToken],
   );
 
+  /** Likes or unlikes a pet. The heart changes at once; the server confirms. */
+  const setLike = useCallback(
+    (id, on) => {
+      const mark = (state) =>
+        setLiked((current) => {
+          const next = current.filter((other) => other !== id);
+          if (state) next.push(id);
+          store(LIKED_KEY, next);
+          return next;
+        });
+      const bump = (by) =>
+        setLikes((current) => ({ ...current, [id]: Math.max(0, (current[id] || 0) + by) }));
+      mark(on);
+      bump(on ? 1 : -1);
+      likePet(id, visitor, on).then(
+        (result) => setLikes((current) => ({ ...current, [id]: result.likes })),
+        () => {
+          mark(!on);
+          bump(on ? -1 : 1);
+        },
+      );
+    },
+    [visitor],
+  );
+
   const value = useMemo(
     () => ({
-      available: pets !== null,
+      online: pets !== null,
       pets: pets || [],
+      ownerPets: OWNER_PETS,
       roaming,
       keys,
+      likes,
+      liked,
       editing,
       isAdmin: adminToken !== "",
       place,
       unplace,
       savePet,
       removePet,
+      setLike,
       openEditor: (pet = null) => {
         setEditing(pet);
         setView("editor");
@@ -156,18 +206,18 @@ export function PetProvider({ ready, children }) {
       openVisitors: () => setView("visitors"),
       close: () => setView(null),
     }),
-    [pets, roaming, keys, editing, adminToken, place, unplace, savePet, removePet],
+    [pets, roaming, keys, likes, liked, editing, adminToken, place, unplace, savePet, removePet, setLike],
   );
 
   return (
     <PetContext.Provider value={value}>
       {children}
-      {pets !== null && ready && (
+      {ready && (
         <>
           <PetLayer />
-          {!view && <PetInvite />}
-          {view === "editor" && <PetEditor key={editing?.id} />}
-          {view === "visitors" && <VisitorsPanel />}
+          {pets !== null && !view && <PetInvite />}
+          {pets !== null && view === "editor" && <PetEditor key={editing?.id} />}
+          {pets !== null && view === "visitors" && <VisitorsPanel />}
         </>
       )}
     </PetContext.Provider>
@@ -176,8 +226,8 @@ export function PetProvider({ ready, children }) {
 
 /** Footer link to the visitors panel; renders nothing without the API. */
 export function VisitorsLink() {
-  const { available, pets, openVisitors } = usePets();
-  if (!available) return null;
+  const { online, pets, openVisitors } = usePets();
+  if (!online) return null;
   return (
     <a
       href="#visitors"

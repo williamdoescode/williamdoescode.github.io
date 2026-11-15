@@ -1,22 +1,26 @@
-/* Visitor pets: sprites, the roaming layer, the invite, and the modals. */
+/* Pets: sprites, the roaming layer, the invite, the modals, and the panel in
+   the Entertainment section. */
 
 /* The pet UI has its own type: a pixel face for names, titles, and labels,
    to match the pixel art. Long text stays in the site's sans for reading. */
 .pet-layer,
 .pet-invite,
 .pet-overlay,
+.pet-panel,
 .pet-ghost {
-  --pet-display: "Pixelify Sans", var(--sans);
+  --pet-display: "Jersey 15", var(--sans);
   --pet-label: "Silkscreen", var(--mono);
 }
 .pet-invite .eyebrow,
-.pet-overlay .eyebrow {
+.pet-overlay .eyebrow,
+.pet-panel .eyebrow {
   font: 400 10.5px/1.6 var(--pet-label);
   letter-spacing: 0.6px;
 }
 .pet-invite .button,
-.pet-overlay .button {
-  font: 500 15px/1.4 var(--pet-display);
+.pet-overlay .button,
+.pet-panel .button {
+  font: 400 18px/1.4 var(--pet-display);
   letter-spacing: 0.2px;
 }
 
@@ -84,7 +88,7 @@
   border-radius: 999px;
   background: var(--surface);
   color: var(--text);
-  font: 500 13px/1.6 var(--pet-display);
+  font: 400 15px/1.6 var(--pet-display);
   white-space: nowrap;
   user-select: none;
   opacity: 0;
@@ -248,7 +252,7 @@
   border-bottom: 1px solid var(--line);
 }
 .pet-modal-header h2 {
-  font: 600 30px/1.1 var(--pet-display);
+  font: 400 35px/1.1 var(--pet-display);
   letter-spacing: 0;
 }
 .pet-modal-body {
@@ -298,7 +302,7 @@
   border-radius: 999px;
   background: none;
   color: var(--muted);
-  font: 500 13px/1.5 var(--pet-display);
+  font: 400 15px/1.5 var(--pet-display);
   transition:
     color 0.15s,
     border-color 0.15s,
@@ -329,7 +333,7 @@
 }
 .pet-species button {
   padding: 7px 16px;
-  font-size: 15px;
+  font-size: 18px;
 }
 .pet-species i {
   margin-right: 6px;
@@ -444,11 +448,12 @@
 }
 .pet-chips button {
   padding: 2px 9px;
-  font-size: 12.5px;
+  font-size: 14.5px;
 }
 
 /* ───────── Card and signature ───────── */
 .pet-card-stage {
+  position: relative;
   width: fit-content;
   display: grid;
   place-items: end center;
@@ -482,7 +487,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font: 600 22px/1.25 var(--pet-display);
+  font: 400 26px/1.25 var(--pet-display);
 }
 .pet-card-badge {
   position: absolute;
@@ -542,7 +547,7 @@
   left: 22px;
   bottom: 28%;
   color: var(--muted);
-  font: 400 17px var(--pet-display);
+  font: 400 20px var(--pet-display);
   pointer-events: none;
 }
 .signature-clear {
@@ -553,7 +558,7 @@
   border: 0;
   background: none;
   color: var(--muted);
-  font: 500 13px var(--pet-display);
+  font: 400 15px var(--pet-display);
 }
 .signature-clear:hover {
   color: var(--text);
@@ -580,7 +585,7 @@
   border-radius: 8px;
   background: var(--bg);
   color: var(--text);
-  font: 500 20px/1.3 var(--pet-display);
+  font: 400 24px/1.3 var(--pet-display);
 }
 .pet-fields .pet-note {
   margin-top: 0;
@@ -654,10 +659,139 @@
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
+@media (max-width: 580px) {
+  .entertainment-section {
+    row-gap: 22px;
+  }
+  .pets-heading {
+    margin-top: 16px;
+  }
+  /* Two cards fit across a phone, so show two of the newest. */
+  .pet-latest li:nth-child(n + 3) {
+    display: none;
+  }
+}
 @media print {
   .pet-layer,
   .pet-invite,
   .pet-overlay {
     display: none;
   }
+}
+
+/* ───────── What a pet says when clicked ───────── */
+.pet-say {
+  position: absolute;
+  left: 50%;
+  z-index: 1;
+  translate: -50% 0;
+  padding: 1px 9px 2px;
+  border-radius: 9px;
+  background: var(--text);
+  color: var(--bg);
+  font: 400 17px/1.5 var(--pet-display);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: pet-say 1.4s ease both;
+}
+.pet-say::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  translate: -50% 0;
+  border: 5px solid transparent;
+  border-top-color: var(--text);
+  border-bottom: 0;
+}
+.roaming-pet .pet-say {
+  bottom: 100px;
+}
+.pet-card-stage .pet-say {
+  top: 5px;
+}
+@keyframes pet-say {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.8);
+  }
+  12%,
+  75% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* ───────── Likes ───────── */
+.pet-card-actions .pet-like {
+  display: inline-flex;
+  align-items: center;
+  font-variant-numeric: tabular-nums;
+}
+.pet-card-actions .pet-like:hover,
+.pet-card-actions .pet-like[aria-pressed="true"] {
+  color: #e5675f;
+}
+.pet-card-actions .pet-like[aria-pressed="true"] {
+  border-color: color-mix(in srgb, #e5675f 45%, var(--line));
+}
+.pet-like[aria-pressed="true"] i {
+  animation: pet-like 0.35s ease;
+}
+@keyframes pet-like {
+  40% {
+    transform: scale(1.5);
+  }
+}
+
+/* ───────── Pets in the Entertainment section ───────── */
+.entertainment-section {
+  row-gap: 44px;
+}
+.pets-heading h3 {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.pet-panel {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+}
+.pet-group-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px 16px;
+  margin-bottom: 12px;
+}
+.pet-group-head h4 {
+  margin: 2px 0 0;
+  font: 400 27px/1.2 var(--pet-display);
+}
+.pet-group-actions {
+  display: flex;
+  gap: 8px;
+}
+.pet-group-actions .button {
+  min-height: 36px;
+  padding: 6px 13px;
+}
+.pet-panel .pet-grid {
+  margin-top: 0;
+}
+.pet-panel .pet-card {
+  background: var(--surface);
+}
+.pet-panel .pet-empty {
+  padding: 26px 16px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  font-size: 14px;
 }

@@ -3,7 +3,7 @@
 // part map in rig.js (legs below row 25, tail left of column 6, and so on).
 import { SIZE } from "./rig.js";
 
-function draw(shapes, outline) {
+export function draw(shapes, outline) {
   const grid = new Array(SIZE * SIZE).fill(null);
   for (const [x0, y0, x1, y1, color] of shapes)
     for (let y = y0; y <= y1; y++)

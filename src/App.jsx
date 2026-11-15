@@ -6,6 +6,7 @@ import MusicPanel from "./music/MusicPanel.jsx";
 import LyricsBackdrop from "./music/LyricsBackdrop.jsx";
 import MiniPlayer from "./music/MiniPlayer.jsx";
 import { PetProvider, VisitorsLink } from "./pets/PetProvider.jsx";
+import PetPanel from "./pets/PetPanel.jsx";
 import {
   asset,
   email,
@@ -566,6 +567,18 @@ export default function App() {
               </p>
             </SectionHeading>
             <MusicPanel />
+            <div className="section-heading pets-heading" id="pets">
+              <h3>Pets</h3>
+              <p>
+                Meet the pack.
+                <br />
+                Then leave one of your own.
+              </p>
+              <p className="toolkit-hint">
+                Click a pet to hear it. Drag it onto the page to let it roam.
+              </p>
+            </div>
+            <PetPanel />
           </section>
           <Contact />
         </main>

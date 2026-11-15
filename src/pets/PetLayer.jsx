@@ -4,6 +4,7 @@ import { PIXELS, SPECIES_SCALE } from "./rig.js";
 import { framesFor, reducedMotion } from "./sprites.js";
 import { useSkin } from "./PetSprite.jsx";
 import { usePets } from "./PetProvider.jsx";
+import { soundFor } from "./sounds.js";
 
 const BOX = PIXELS; // on-screen size of a pet's frame
 const WALK_SPEED = 70; // px per second
@@ -13,7 +14,7 @@ const between = (min, max) => min + Math.random() * (max - min);
 
 /**
  * One pet living on the bottom edge of the window. It wanders, sits, and
- * naps on its own; click it to make it jump or attack, drag it to carry it
+ * naps on its own; click it to make it speak and jump or attack, drag it to carry it
  * (it does not enjoy that), and dismiss it from its name tag.
  */
 function RoamingPet({ pet, at, onRemove }) {
@@ -22,6 +23,7 @@ function RoamingPet({ pet, at, onRemove }) {
   const canvas = useRef(null);
   const control = useRef(null);
   const [tagged, setTagged] = useState(false);
+  const [said, setSaid] = useState(null); // { text, n }: what it just barked
 
   useEffect(() => {
     if (!skin) return;
@@ -169,6 +171,7 @@ function RoamingPet({ pet, at, onRemove }) {
         if (skipClick) return (skipClick = false);
         if (s.state === "dying" || s.state === "fall") return;
         play("act", Math.random() < 0.5 ? "jump" : "attack");
+        return true;
       },
       dismiss() {
         if (s.state === "dying") return;
@@ -191,20 +194,35 @@ function RoamingPet({ pet, at, onRemove }) {
     return () => clearTimeout(timer);
   }, [tagged]);
 
+  useEffect(() => {
+    if (!said) return;
+    const timer = setTimeout(() => setSaid(null), 1400);
+    return () => clearTimeout(timer);
+  }, [said]);
+
   if (!skin) return null;
   return (
     <div ref={box} className="roaming-pet" data-tagged={tagged || undefined}>
       <canvas ref={canvas} className="pet-sprite" width={PIXELS} height={PIXELS} />
+      {said && (
+        <span key={said.n} className="pet-say" role="status">
+          {said.text}
+        </span>
+      )}
       <button
         type="button"
         className="roaming-pet-hit"
-        aria-label={`${pet.name} the ${pet.species}. Press to play, Delete to send home.`}
+        aria-label={`${pet.name} the ${pet.breed || pet.species}. Press to play, Delete to send home.`}
         onPointerDown={(event) => control.current.down(event)}
         onPointerMove={(event) => control.current.move(event)}
         onPointerUp={() => control.current.up()}
         onPointerCancel={() => control.current.up()}
         onClick={() => {
-          control.current.click();
+          if (control.current.click())
+            setSaid((last) => ({
+              text: soundFor(pet.species, last?.text),
+              n: (last?.n || 0) + 1,
+            }));
           setTagged(true);
         }}
         onKeyDown={(event) => {

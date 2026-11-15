@@ -31,11 +31,15 @@ const post = (payload) =>
     body: JSON.stringify(payload),
   });
 
+/** Resolves to { pets, likes }, where likes maps a pet id to its count. */
 export async function listPets() {
-  const { pets } = await call({ cache: "no-store" });
+  const { pets, likes } = await call({ cache: "no-store" });
   if (!Array.isArray(pets)) throw new Error("The pet server is not available.");
-  return pets;
+  return { pets, likes: likes && typeof likes === "object" ? likes : {} };
 }
+/** Adds or removes this visitor's like; resolves to { id, likes, liked }. */
+export const likePet = (id, visitor, on) =>
+  post({ action: "like", id, visitor, on });
 /** Both resolve to { pet, token }; the token lets this visitor edit it later. */
 export const createPet = (pet) => post({ action: "create", ...pet });
 export const updatePet = (id, token, pet) =>

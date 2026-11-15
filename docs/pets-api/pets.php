@@ -11,6 +11,12 @@
 //   POST pets.php {action:"create", ...}        -> { pet, token }
 //   POST pets.php {action:"update", id, token, ...} -> { pet, token }
 //   POST pets.php {action:"delete", id, token}  (admin only)
+//   POST pets.php {action:"like", id, visitor, on}  -> { id, likes, liked }
+//
+// GET also returns { likes: { id: count } }. Likes are kept apart from the
+// pet records (data/likes.json), so they also work for William's own pets,
+// which are built into the site and have no record here. Each browser sends
+// a random "visitor" id; a visitor can like each pet once.
 //
 // "token" on create/update is the owner's edit token: the browser that made
 // the pet keeps it and must send it back to edit. Only its hash is stored.
@@ -25,6 +31,8 @@ const MAX_PETS = 1000;
 const MAX_PER_HOUR = 3;
 const MAX_PER_DAY = 8;
 const MAX_EDITS_PER_HOUR = 20;
+const MAX_LIKES_PER_HOUR = 120;
+const OWNER_PETS = ['brixi', 'lira', 'cloe', 'adelle', 'mustard', 'maple'];
 const MAX_NAME = 24;
 const MAX_PNG_BYTES = 6000;
 const MAX_STROKES = 60;
@@ -177,7 +185,7 @@ function limit(string $private, string $bucket, int $perHour, int $perDay): void
     $mine = $rates[$who] ?? [];
     $lastHour = count(array_filter($mine, fn($t) => $t > $now - 3600));
     if ($lastHour >= $perHour || count($mine) >= $perDay) {
-        fail(429, 'That is a lot of pets! Please come back later.');
+        fail(429, 'That is a lot at once! Please come back later.');
     }
     $rates[$who] = [...$mine, $now];
     write_json($private . '/rate.json', $rates);
@@ -189,7 +197,10 @@ if ($method === 'OPTIONS') {
     exit;
 }
 if ($method === 'GET') {
-    respond(200, ['pets' => array_values(read_json($data . '/pets.json'))]);
+    respond(200, [
+        'pets' => array_values(read_json($data . '/pets.json')),
+        'likes' => (object) read_json($data . '/likes.json'),
+    ]);
 }
 if ($method !== 'POST') {
     fail(405, 'Method not allowed.');
@@ -229,6 +240,8 @@ $index = $data . '/pets.json';
 $tokensFile = $private . '/tokens.json'; // pet id => sha256 of its edit token
 $id = (string) ($input['id'] ?? '');
 $given = (string) ($input['token'] ?? '');
+$likesFile = $data . '/likes.json'; // pet id => number of likes
+$likersFile = $private . '/likers.json'; // pet id => hashed visitor ids
 $skinFile = fn(array $pet) => preg_match('#^data/pets/[a-f0-9-]+\.png$#', $pet['skin'] ?? '')
     ? __DIR__ . '/' . $pet['skin']
     : null;
@@ -237,6 +250,40 @@ if ($action === 'delete' || $action === 'update') {
     if (!preg_match('/^[a-f0-9]{12}$/', $id)) {
         fail(400, 'Unknown pet.');
     }
+}
+
+if ($action === 'like') {
+    $visitor = (string) ($input['visitor'] ?? '');
+    if (!preg_match('/^[a-f0-9]{16,64}$/', $visitor)) {
+        fail(400, 'Bad request.');
+    }
+    $known = in_array($id, OWNER_PETS, true);
+    if (!$known && preg_match('/^[a-f0-9]{12}$/', $id)) {
+        foreach (read_json($index) as $pet) {
+            $known = $known || ($pet['id'] ?? '') === $id;
+        }
+    }
+    if (!$known) {
+        fail(404, 'That pet is no longer here.');
+    }
+    limit($private, 'like:', MAX_LIKES_PER_HOUR, MAX_LIKES_PER_HOUR * 3);
+
+    $who = hash('sha256', file_get_contents($private . '/salt.txt') . $visitor);
+    $likers = read_json($likersFile);
+    $fans = array_values(array_filter((array) ($likers[$id] ?? []), fn($fan) => $fan !== $who));
+    $liked = ($input['on'] ?? true) !== false;
+    if ($liked) {
+        $fans[] = $who;
+    }
+    $likers[$id] = $fans;
+    $likes = read_json($likesFile);
+    $likes[$id] = count($fans);
+    if (!$fans) {
+        unset($likers[$id], $likes[$id]);
+    }
+    write_json($likersFile, $likers);
+    write_json($likesFile, $likes);
+    respond(200, ['id' => $id, 'likes' => count($fans), 'liked' => $liked]);
 }
 
 if ($action === 'delete') {
@@ -258,6 +305,11 @@ if ($action === 'delete') {
     $tokens = read_json($tokensFile);
     unset($tokens[$id]);
     write_json($tokensFile, $tokens);
+    foreach ([$likesFile, $likersFile] as $file) {
+        $list = read_json($file);
+        unset($list[$id]);
+        write_json($file, $list);
+    }
     respond(200, ['deleted' => count($pets) - count($kept)]);
 }
 
