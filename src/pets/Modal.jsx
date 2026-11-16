@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import Icon from "../Icon.jsx";
+import { usePets } from "./PetProvider.jsx";
 
 // A page overlay rather than a <dialog>: a pet dragged out of the visitors
 // panel has to travel over the page, which the browser's top layer would hide.
@@ -12,6 +13,7 @@ export default function Modal({
   ...rest
 }) {
   const box = useRef(null);
+  const { leaving } = usePets(); // true while the closing animation plays
   useEffect(() => {
     const shell = document.querySelector(".site-shell");
     const before = document.activeElement;
@@ -50,6 +52,7 @@ export default function Modal({
   return (
     <div
       className={`pet-overlay ${className}`}
+      data-closing={leaving || undefined}
       onPointerDown={(event) =>
         event.target === event.currentTarget && onClose()
       }

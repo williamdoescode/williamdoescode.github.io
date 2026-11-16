@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { checkAdmin, deletePet, likePet, listPets } from "./api.js";
@@ -190,6 +191,27 @@ export function PetProvider({ ready, children }) {
     [visitor],
   );
 
+  // Closing a panel lets its exit animation play before it is removed.
+  const [leaving, setLeaving] = useState(false);
+  const leaveTimer = useRef(null);
+  const closeNow = useCallback(() => {
+    clearTimeout(leaveTimer.current);
+    setLeaving(false);
+    setView(null);
+  }, []);
+  const close = useCallback(() => {
+    clearTimeout(leaveTimer.current);
+    setLeaving(true);
+    leaveTimer.current = setTimeout(closeNow, 180);
+  }, [closeNow]);
+  const show = useCallback((next, pet) => {
+    clearTimeout(leaveTimer.current);
+    setLeaving(false);
+    if (next === "editor") setEditing(pet);
+    setView(next);
+  }, []);
+  useEffect(() => () => clearTimeout(leaveTimer.current), []);
+
   const value = useMemo(
     () => ({
       online: pets !== null,
@@ -206,14 +228,13 @@ export function PetProvider({ ready, children }) {
       savePet,
       removePet,
       setLike,
-      openEditor: (pet = null) => {
-        setEditing(pet);
-        setView("editor");
-      },
-      openVisitors: () => setView("visitors"),
-      close: () => setView(null),
+      leaving,
+      openEditor: (pet = null) => show("editor", pet),
+      openVisitors: () => show("visitors"),
+      close,
+      closeNow,
     }),
-    [pets, roaming, keys, likes, liked, editing, adminToken, place, unplace, savePet, removePet, setLike],
+    [leaving, close, closeNow, show, pets, roaming, keys, likes, liked, editing, adminToken, place, unplace, savePet, removePet, setLike],
   );
 
   return (

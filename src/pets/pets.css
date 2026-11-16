@@ -227,6 +227,14 @@
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   transition: opacity 0.2s;
+  animation: fade-in 0.2s ease both;
+}
+.pet-overlay[data-closing] {
+  pointer-events: none;
+  animation: fade-out 0.18s ease both;
+}
+.pet-overlay[data-closing] .pet-modal {
+  animation: modal-out 0.18s ease-in both;
 }
 /* While a pet is dragged out, the panel steps aside to show the page. */
 .pet-overlay[data-dragging] {
@@ -242,7 +250,7 @@
   border-radius: 12px;
   background: var(--surface);
   box-shadow: 0 30px 100px #0005;
-  animation: enter 0.25s ease both;
+  animation: modal-in 0.24s cubic-bezier(0.2, 0.8, 0.3, 1) both;
 }
 .pet-visitors .pet-modal {
   width: min(900px, 100%);
@@ -341,6 +349,37 @@
 }
 .pet-species i {
   margin-right: 6px;
+}
+/* Asked before a change of animal throws the painting away. */
+.pet-warn {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin: -6px 0 16px;
+  padding: 10px 14px;
+  border: 1px solid #e0a23a88;
+  border-radius: 10px;
+  background: #e0a23a1c;
+  font-size: 13.5px;
+  line-height: 1.5;
+  animation: pet-pop 0.18s ease both;
+}
+.pet-warn p {
+  flex: 1 1 240px;
+  margin: 0;
+}
+.pet-warn i {
+  margin-right: 6px;
+  color: #e0a23a;
+}
+.pet-warn div {
+  display: flex;
+  gap: 8px;
+}
+.pet-warn .painter-text[data-go] {
+  border-color: var(--text);
+  color: var(--text);
 }
 .pet-editor {
   display: grid;

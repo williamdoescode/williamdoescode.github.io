@@ -41,6 +41,12 @@ function Painter({ skin, species, onChange }) {
   const work = useRef(null); // pixels being edited during a stroke
   const lastCell = useRef(null);
   const undo = useRef([]);
+  // Undo never reaches back into a different animal's painting.
+  const kind = useRef(species);
+  if (kind.current !== species) {
+    kind.current = species;
+    undo.current = [];
+  }
   const [tool, setTool] = useState("pencil");
   const [color, setColor] = useState(PALETTE[8]);
 
@@ -270,7 +276,7 @@ export default function PetEditor() {
   const [skin, setSkin] = useState(() =>
     editing ? null : new Uint8ClampedArray(TEMPLATES.dog),
   );
-  const [touched, setTouched] = useState(Boolean(editing));
+  const [pending, setPending] = useState(null); // species awaiting a yes
   const [name, setName] = useState(editing?.name || "");
   const [signature, setSignature] = useState(editing?.signature || []);
   const [website, setWebsite] = useState(""); // honeypot: people never see it
@@ -294,10 +300,19 @@ export default function PetEditor() {
   let painted = 0;
   for (let i = 3; skin && i < skin.length; i += 4) if (skin[i]) painted++;
 
-  function chooseSpecies(next) {
+  // Each animal has its own shape, so a change of animal always starts from
+  // that animal's template. If that would lose any painting, ask first.
+  function switchSpecies(next) {
     setSpecies(next);
-    // An untouched template swaps with the species; a painting is kept.
-    if (!touched) setSkin(new Uint8ClampedArray(TEMPLATES[next]));
+    setSkin(new Uint8ClampedArray(TEMPLATES[next]));
+    setPending(null);
+  }
+  function chooseSpecies(next) {
+    if (next === species) return setPending(null);
+    const template = TEMPLATES[species];
+    const untouched = skin && skin.every((value, i) => value === template[i]);
+    if (untouched) switchSpecies(next);
+    else setPending(next);
   }
   async function save(event) {
     event.preventDefault();
@@ -444,16 +459,32 @@ export default function PetEditor() {
             </button>
           ))}
         </div>
+        {pending && (
+          <div className="pet-warn" role="alert">
+            <p>
+              <Icon name="solid fa-triangle-exclamation" />
+              Changing to a {SPECIES_LABELS[pending].toLowerCase()} resets your
+              painting to the {SPECIES_LABELS[pending].toLowerCase()} template.
+              Your current progress will be lost.
+            </p>
+            <div>
+              <button type="button" className="painter-text" onClick={() => setPending(null)}>
+                Keep my painting
+              </button>
+              <button
+                type="button"
+                className="painter-text"
+                data-go
+                onClick={() => switchSpecies(pending)}
+              >
+                Change to {SPECIES_LABELS[pending]}
+              </button>
+            </div>
+          </div>
+        )}
         {skin && (
         <div className="pet-editor">
-          <Painter
-            skin={skin}
-            species={species}
-            onChange={(next) => {
-              setSkin(next);
-              setTouched(true);
-            }}
-          />
+          <Painter skin={skin} species={species} onChange={setSkin} />
           <Preview skin={skin} species={species} />
         </div>
         )}

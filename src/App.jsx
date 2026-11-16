@@ -65,7 +65,7 @@ function Header({ theme, onToggle }) {
         <a href="#projects">Projects</a>
         <a href="#experience">Experience</a>
         <a href="#toolkit">Toolkit</a>
-        <a href="#entertainment">Music</a>
+        <a href="#entertainment">Entertainment</a>
         <a href="#contact">Contact</a>
       </nav>
       <button
@@ -196,11 +196,20 @@ function ProjectCard({ project, onOpen }) {
 function ProjectGallery({ project, onClose }) {
   const dialog = useRef(null);
   const [index, setIndex] = useState(0);
+  // Closing plays the exit animation first, then really closes.
+  const [closing, setClosing] = useState(false);
+  const timer = useRef(null);
+  const dismiss = () => {
+    if (closing) return;
+    setClosing(true);
+    timer.current = setTimeout(onClose, 180);
+  };
   useEffect(() => {
     const element = dialog.current;
     element.showModal();
     document.body.classList.add("gallery-open");
     return () => {
+      clearTimeout(timer.current);
       element.close();
       document.body.classList.remove("gallery-open");
     };
@@ -216,9 +225,10 @@ function ProjectGallery({ project, onClose }) {
       id="project-dialog"
       aria-labelledby="dialog-title"
       aria-describedby="dialog-description"
+      data-closing={closing || undefined}
       onCancel={(event) => {
         event.preventDefault();
-        onClose();
+        dismiss();
       }}
       onKeyDown={(event) => {
         if (event.key === "Tab") {
@@ -247,7 +257,7 @@ function ProjectGallery({ project, onClose }) {
             event.clientY < rect.top ||
             event.clientY > rect.bottom)
         )
-          onClose();
+          dismiss();
       }}
     >
       <div className="dialog-header">
@@ -257,7 +267,7 @@ function ProjectGallery({ project, onClose }) {
           type="button"
           autoFocus
           aria-label="Close project gallery"
-          onClick={onClose}
+          onClick={dismiss}
         >
           <Icon name="solid fa-xmark" />
         </button>

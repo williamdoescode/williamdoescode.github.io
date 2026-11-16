@@ -9,7 +9,7 @@ const PAGE = 12;
 
 /** Every visitor's pet. Any of them can be dragged out onto the page. */
 export default function VisitorsPanel() {
-  const { pets, likes, close, openEditor } = usePets();
+  const { pets, likes, close, closeNow, openEditor } = usePets();
   const [order, setOrder] = useState("newest"); // newest | liked | name
   const sorted = useMemo(() => {
     if (order === "liked")
@@ -18,7 +18,7 @@ export default function VisitorsPanel() {
     return pets; // the server lists the newest first
   }, [pets, likes, order]);
   const finder = usePetFinder(sorted, PAGE);
-  const [grab, ghost, dragging] = useDragOut(close);
+  const [grab, ghost, dragging] = useDragOut(closeNow); // already faded out mid-drag
   const body = useRef(null);
 
   return (
