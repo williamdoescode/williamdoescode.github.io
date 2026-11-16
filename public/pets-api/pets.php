@@ -25,8 +25,9 @@
 //
 //   POST pets.php {action:"admin", token}       -> { ok: true } if it is the admin token
 //
-// To enable deleting, put a long random string in data/private/admin-token.txt
-// (next to this file's data folder, not in the site root).
+// To enable deleting, set the admin token: either its SHA-256 hash in
+// admin-hash.php (in the project, deployed with this file), or the token
+// itself in data/private/admin-token.txt on the server.
 
 declare(strict_types=1);
 
@@ -294,11 +295,18 @@ if ($action === 'delete' || $action === 'admin') {
     // letter when saved as "Unicode"); drop them so only the token is compared.
     $token = (string) @file_get_contents($private . '/admin-token.txt');
     $token = trim(str_replace(["\xEF\xBB\xBF", "\xFF\xFE", "\xFE\xFF", "\0"], '', $token));
-    if ($token === '') {
-        fail(403, 'Deleting is not set up yet: pets-api/data/private/admin-token.txt is missing or empty on the server.');
+    // The token can also be set in the project as a hash (admin-hash.php,
+    // deployed with this file), so nothing has to be created on the server.
+    $hash = is_file(__DIR__ . '/admin-hash.php') ? include __DIR__ . '/admin-hash.php' : '';
+    $hash = is_string($hash) && preg_match('/^[a-f0-9]{64}$/', $hash) ? $hash : '';
+    $given = trim($given);
+    if ($token === '' && $hash === '') {
+        fail(403, 'Deleting is not set up yet: there is no admin token on the server.');
     }
-    if (!hash_equals($token, trim($given))) {
-        fail(403, 'That is not the admin token. It must match the text in admin-token.txt exactly.');
+    $matches = ($token !== '' && hash_equals($token, $given))
+        || ($hash !== '' && hash_equals($hash, hash('sha256', $given)));
+    if (!$matches) {
+        fail(403, 'That is not the admin token.');
     }
 }
 if ($action === 'admin') {

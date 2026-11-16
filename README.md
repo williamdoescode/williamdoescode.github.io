@@ -88,7 +88,15 @@ Pets saved while developing land in `public/pets-api/data/`, which is git-ignore
 
 ### Moderation
 
-Create `admin-token.txt` on the server containing a long random string, in the `data/private/` folder that sits beside the live `pets.php` (on cPanel: `public_html/pets-api/data/private/admin-token.txt`). The file holds only the token, for example `k3Vq8nZp2Lw9Xr5Tb7Ym4Hd6`. Then open the site at `#pets-admin` and enter that same text. A wrong token, or a missing file, is reported straight away; a correct one adds a Delete button to each card in the Visitors panel. This is not a pet's edit token. Without the file, deleting is disabled.
+Open the site at `#pets-admin` and enter the admin token. A wrong token is reported straight away; the right one adds a Delete button to each card in the Visitors panel.
+
+The token is set in `public/pets-api/admin-hash.php`, which holds only its SHA-256 hash, so the file is safe to commit and deploys with the site. The token itself is not written anywhere in the project: keep it somewhere private. To change it, pick a long random string and put its hash in that file:
+
+```sh
+php -r "echo hash('sha256', 'your-new-token');"
+```
+
+A plain-text token in `pets-api/data/private/admin-token.txt` on the server also works, beside the live `pets.php`. Never commit a plain-text token: this repository and the GitHub Pages site are public. This is not a pet's edit token.
 
 ## Music
 
