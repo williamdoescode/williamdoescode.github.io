@@ -1,5 +1,5 @@
-// The standard Dog and Cat that visitors paint over. Each is built from a few
-// rectangles and then outlined, so the art always lines up with the rig's
+// The standard Dog, Cat, and Rabbit that visitors paint over. Each is built
+// from a few rectangles and then outlined, so the art always lines up with the rig's
 // part map in rig.js (legs below row 25, tail left of column 6, and so on).
 import { SIZE } from "./rig.js";
 
@@ -99,5 +99,41 @@ function cat() {
   );
 }
 
-export const SPECIES = ["dog", "cat"];
-export const TEMPLATES = { dog: dog(), cat: cat() };
+function rabbit() {
+  const fur = "#e8e0d2";
+  const shade = "#c7bcab";
+  const white = "#fbf8f1";
+  const pink = "#f2a9b8";
+  const ink = "#3a2a28";
+  return draw(
+    [
+      [12, 25, 14, 30, shade], // far legs
+      [22, 26, 23, 30, shade],
+      [7, 25, 10, 30, fur], // big hind foot
+      [17, 26, 19, 30, fur],
+      [8, 15, 23, 24, fur], // round body
+      [9, 14, 22, 14, fur],
+      [7, 17, 7, 23, fur],
+      [11, 22, 20, 24, white],
+      [3, 17, 5, 20, white], // cotton tail
+      [6, 18, 6, 19, white],
+      [20, 8, 28, 15, fur], // head
+      [21, 7, 27, 7, fur],
+      [28, 10, 29, 14, fur],
+      [26, 13, 28, 15, white],
+      [29, 11, 29, 11, pink], // nose
+      [25, 10, 25, 11, ink], // eye
+      [21, 2, 22, 7, fur], // tall ears
+      [24, 1, 25, 7, fur],
+      [22, 3, 22, 6, pink],
+      [25, 2, 25, 6, pink],
+    ],
+    "#5a4a42",
+  );
+}
+
+export const SPECIES = ["dog", "cat", "rabbit"];
+export const SPECIES_LABELS = { dog: "Dog", cat: "Cat", rabbit: "Rabbit" };
+// Font Awesome's free set has no rabbit, so it gets a carrot.
+export const SPECIES_ICONS = { dog: "solid fa-dog", cat: "solid fa-cat", rabbit: "solid fa-carrot" };
+export const TEMPLATES = { dog: dog(), cat: cat(), rabbit: rabbit() };

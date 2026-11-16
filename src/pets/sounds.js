@@ -24,6 +24,16 @@ const SOUNDS = {
     "Hsss!",
     "Miau~",
   ],
+  rabbit: [
+    "Squeak!",
+    "*thump*",
+    "Hop hop!",
+    "Nibble~",
+    "Snff snff",
+    "Eep!",
+    "*binky*",
+    "Honk!",
+  ],
 };
 
 /** A random sound for the species, never the same one twice in a row. */

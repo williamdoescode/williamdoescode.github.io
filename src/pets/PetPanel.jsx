@@ -67,7 +67,7 @@ export default function PetPanel() {
           </header>
           {pets.length === 0 ? (
             <p className="pet-empty">
-              No visitor pets yet. Paint a dog or cat and yours will be the first.
+              No visitor pets yet. Paint a dog, cat, or rabbit and yours will be the first.
             </p>
           ) : (
             <ul className="pet-grid pet-latest">

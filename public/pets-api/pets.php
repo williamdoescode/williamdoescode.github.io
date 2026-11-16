@@ -92,8 +92,8 @@ function write_json(string $file, array $value): void
 function validated(array $input): array
 {
     $species = $input['species'] ?? '';
-    if (!in_array($species, ['dog', 'cat'], true)) {
-        fail(422, 'Pick a dog or a cat.');
+    if (!in_array($species, ['dog', 'cat', 'rabbit'], true)) {
+        fail(422, 'Pick a dog, a cat, or a rabbit.');
     }
 
     $name = is_string($input['name'] ?? null) ? $input['name'] : '';

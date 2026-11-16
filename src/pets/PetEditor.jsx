@@ -8,7 +8,7 @@ import { usePets } from "./PetProvider.jsx";
 import { createPet, updatePet } from "./api.js";
 import { loadSkin, skinToPng } from "./sprites.js";
 import { SIZE } from "./rig.js";
-import { SPECIES, TEMPLATES } from "./templates.js";
+import { SPECIES, SPECIES_ICONS, SPECIES_LABELS, TEMPLATES } from "./templates.js";
 import { ANIMATIONS, ANIMATION_LABELS, ANIMATION_NAMES } from "./animations.js";
 
 const PALETTE = [
@@ -372,7 +372,7 @@ export default function PetEditor() {
                 maxLength={MAX_NAME}
                 required
                 autoComplete="off"
-                placeholder={species === "dog" ? "Biscuit" : "Mochi"}
+                placeholder={{ dog: "Biscuit", cat: "Mochi", rabbit: "Clover" }[species]}
                 onChange={(event) => setName(event.target.value)}
               />
             </label>
@@ -440,7 +440,7 @@ export default function PetEditor() {
               aria-pressed={species === kind}
               onClick={() => chooseSpecies(kind)}
             >
-              <Icon name={`solid fa-${kind}`} /> {kind === "dog" ? "Dog" : "Cat"}
+              <Icon name={SPECIES_ICONS[kind]} /> {SPECIES_LABELS[kind]}
             </button>
           ))}
         </div>

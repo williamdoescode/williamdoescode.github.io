@@ -46,10 +46,12 @@ React needs a development server or production build; opening `index.html` direc
 
 ## Pets
 
-The Entertainment section has a Pets area below the music player. It shows William's own dogs, then the newest visitor pets. Visitors can paint a 32×32 dog or cat, name it, optionally sign its card, and let it roam the page. Every visitor pet appears in the Visitors panel (**See all**, the paw button, the footer link, or `#visitors`), and anyone can drag any pet onto the page.
+The Entertainment section has a Pets area below the music player. It shows William's own dogs, then the newest visitor pets. Visitors can paint a 32×32 dog, cat, or rabbit, name it, optionally sign its card, and let it roam the page. Every visitor pet appears in the Visitors panel (**See all**, the paw button, the footer link, or `#visitors`), and anyone can drag any pet onto the page.
 
 - **William's Pets** are painted in code in `src/pets/owner.js` (Brixi, Lira, Cloe, Adelle, Mustard, Maple). To change a coat or add a dog, edit that file; a new dog's id must also be added to `OWNER_PETS` in `public/pets-api/pets.php` so it can be liked.
-- **Click a pet and it speaks.** Dogs and cats pick a random line from `src/pets/sounds.js`.
+- **Click a pet and it speaks.** Each kind picks a random line from `src/pets/sounds.js`.
+- **Long lists stay manageable.** The Visitors panel and the playground shelf can be narrowed to All, Dog, Cat, or Rabbit, searched by name, and are shown a page at a time (`src/pets/PetFinder.jsx`). The Visitors panel can also be sorted by newest, most liked, or name.
+- **Adding a kind of pet** takes a template in `src/pets/templates.js` (plus its label and icon there), a size in `SPECIES_SCALE` in `rig.js`, sounds in `sounds.js`, habits in `playground/sim.js`, and its name in the species list in `pets.php`. A kind can replace any shared animation in `SPECIES_ANIMATIONS` (`animations.js`); rabbits hop instead of trotting.
 - **Likes.** Each card has a heart. A visitor can like each pet once and take it back. Counts live in `data/likes.json`; the server keeps a salted hash of each browser's random visitor id in `data/private/likers.json` so a repeat like does not count twice.
 
 - **One painting, ten animations.** `src/pets/rig.js` cuts the painting into head, body, legs, and tail, and `src/pets/animations.js` re-poses those parts for Idle, Idle 2, Run, Sitting, Sleep, Jump, Attack, Hurt, Die, and Die 2. Visitors never draw frames. Frames are drawn at twice the painted resolution with in-between poses added automatically, and cats are shown slightly smaller than dogs (`SPECIES_SCALE`). All of this happens when a pet is displayed, so it applies to every pet already saved.
@@ -62,11 +64,11 @@ The Entertainment section has a Pets area below the music player. It shows Willi
 
 **Proceed to Playground** in the Pets area swaps the whole page for a field with trees (`#playground`; **Go back to Main Page** or the browser's Back button returns to where the visitor was). The code is in `src/pets/playground/`.
 
-- Pets wander, nap, and play on their own. Dogs mostly chase the ball, cats mostly bat the yarn and scratch the pole, and each naps by its own kind of house. `sim.js` holds those habits (`WISHES`) and the toy physics (`TOYS`).
+- Pets wander, nap, and play on their own. Dogs mostly chase the ball, cats mostly bat the yarn and scratch the pole, and each naps by its own kind of house. Rabbits mostly hop about. `sim.js` holds those habits (`WISHES`) and the toy physics (`TOYS`).
 - Visitors can click a pet to hear it, click or throw a toy (nearby pets run after it), drag anything to move it, add things from the shelf, and drop a thing on the shelf to put it away. The shelf also chooses which pets are in the field (up to 12).
 - The dog house, cat house, scratch pole, ball, yarn, and trees are painted in code in `art.js`.
 - The layout is saved in each visitor's own browser; it is not shared between visitors.
-- Music keeps playing because the portfolio stays loaded underneath. While a YouTube song plays, its player sits in the corner of the playground at the 200×200 YouTube requires.
+- Music started on the main page keeps playing, because the portfolio stays loaded underneath, and the mini player stays for pause, skip, and volume. The playground has no way to start music and does not show the YouTube player.
 
 ### Run it locally
 

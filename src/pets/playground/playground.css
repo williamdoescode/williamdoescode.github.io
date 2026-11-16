@@ -14,16 +14,6 @@ html[data-view="playground"] .site-shell {
 html[data-view="playground"] :is(.pet-layer, .pet-invite, .skip-link, .lyric-stage) {
   display: none;
 }
-/* YouTube's player has to stay on screen while it plays, so it moves to
-   the corner of the playground at its required 200×200. */
-html[data-view="playground"] .video-embed:not([hidden]):not(:empty) {
-  position: fixed;
-  inset: 78px 14px auto auto;
-  width: 200px;
-  height: 200px;
-  visibility: visible;
-  border: 1px solid var(--line);
-}
 
 .playground {
   --grass: #2c5b39;
@@ -267,6 +257,24 @@ body:has(.mini-player:not([data-hidden])) .playground {
 .pg-shelf-pets {
   flex: 1;
 }
+.pg-roster-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  min-height: 28px;
+}
+.pg-roster-tools .pet-pager {
+  margin-left: auto;
+}
+.pg-roster-empty {
+  margin: 0;
+  height: 78px;
+  display: grid;
+  align-content: center;
+  color: var(--muted);
+  font-size: 13.5px;
+}
 .pg-things,
 .pg-roster {
   display: flex;
@@ -276,6 +284,9 @@ body:has(.mini-player:not([data-hidden])) .playground {
   overflow-x: auto;
   padding-bottom: 4px;
   scrollbar-width: thin;
+}
+.pg-roster {
+  min-height: 82px;
 }
 .pg-things button,
 .pg-roster button {
@@ -399,9 +410,6 @@ body:has(.mini-player:not([data-hidden])) .playground {
   }
   .pg-hint {
     font-size: 11.5px;
-  }
-  html[data-view="playground"] .video-embed:not([hidden]):not(:empty) {
-    inset: 96px 8px auto auto;
   }
 }
 @media print {

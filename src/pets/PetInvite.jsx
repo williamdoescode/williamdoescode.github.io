@@ -50,7 +50,7 @@ export default function PetInvite() {
           </button>
           <span className="eyebrow">VISITOR PETS</span>
           <p>
-            Leave a pet behind? Paint a tiny dog or cat, sign its card, and let
+            Leave a pet behind? Paint a tiny dog, cat, or rabbit, sign its card, and let
             it roam this page.
           </p>
           <div className="pet-bubble-actions">

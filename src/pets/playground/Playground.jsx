@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Icon from "../../Icon.jsx";
-import { useMusic } from "../../music/MusicProvider.jsx";
 import { PIXELS, SPECIES_SCALE } from "../rig.js";
 import { framesFor, reducedMotion } from "../sprites.js";
 import { useSkin } from "../PetSprite.jsx";
+import { KindFilter, NameSearch, Pager, usePetFinder } from "../PetFinder.jsx";
 import { usePets } from "../PetProvider.jsx";
 import { soundFor } from "../sounds.js";
 import { grass, picture } from "./art.js";
@@ -24,7 +24,7 @@ import "./playground.css";
 
 const STORE_KEY = "portfolio-playground"; // this visitor's pets and things
 const MAX_PETS = 12;
-const ROSTER = 40; // newest visitor pets offered on the shelf
+const ROSTER_PAGE = 12; // pets offered on the shelf at a time
 const DRAG_START = 6;
 // Trees and the starting things, as [kind, across, down] in parts of the field.
 const TREES = [
@@ -328,16 +328,12 @@ function PetThumb({ pet }) {
 
 /**
  * The playground: a field with trees where pets roam on their own and play
- * with whatever the visitor puts down. It takes over the whole page; the
- * music keeps playing underneath.
+ * with whatever the visitor puts down. It takes over the whole page. Music
+ * started on the main page keeps playing underneath.
  */
 export default function Playground({ onExit }) {
   const { pets, ownerPets, keys } = usePets();
-  const { track, select } = useMusic();
-  const everyone = useMemo(
-    () => [...ownerPets, ...pets.slice(0, ROSTER)],
-    [ownerPets, pets],
-  );
+  const everyone = useMemo(() => [...ownerPets, ...pets], [ownerPets, pets]);
 
   const [saved] = useState(readStore);
   // null means "the visitor has not chosen yet": William's dogs, the
@@ -352,10 +348,21 @@ export default function Playground({ onExit }) {
   const petIds = useMemo(() => {
     if (chosen) return chosen;
     const visitors = pets.filter((pet) => pet.id in keys).slice(0, 3);
-    const cats = pets.filter((pet) => pet.species === "cat" && !(pet.id in keys)).slice(0, 2);
-    return [...ownerPets, ...visitors, ...cats].map((pet) => pet.id);
+    const others = (species, most) =>
+      pets.filter((pet) => pet.species === species && !(pet.id in keys)).slice(0, most);
+    return [...ownerPets, ...visitors, ...others("cat", 2), ...others("rabbit", 1)].map(
+      (pet) => pet.id,
+    );
   }, [chosen, pets, ownerPets, keys]);
   const inside = everyone.filter((pet) => petIds.includes(pet.id)).slice(0, MAX_PETS);
+  // On the shelf, pets already in the field come first so they are easy to
+  // send home, however long the list gets.
+  const roster = useMemo(
+    () => [...inside, ...everyone.filter((pet) => !inside.includes(pet))],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [everyone, petIds],
+  );
+  const finder = usePetFinder(roster, ROSTER_PAGE);
 
   const wrap = useRef(null);
   const sim = useRef(null);
@@ -513,11 +520,6 @@ export default function Playground({ onExit }) {
           <h1>Playground</h1>
         </div>
         <div className="pg-bar-actions">
-          {!track && (
-            <button className="button button-quiet" type="button" onClick={() => select(0)}>
-              <Icon name="solid fa-music" /> Play music
-            </button>
-          )}
           <button
             className="button button-quiet"
             type="button"
@@ -613,11 +615,17 @@ export default function Playground({ onExit }) {
           </div>
         </section>
         <section className="pg-shelf-group pg-shelf-pets" aria-label="Pets in the playground">
-          <span className="eyebrow">
-            PETS · {inside.length} OF {MAX_PETS}
-          </span>
+          <div className="pg-roster-tools">
+            <span className="eyebrow">
+              PETS · {inside.length} OF {MAX_PETS} IN
+            </span>
+            <KindFilter finder={finder} />
+            <NameSearch finder={finder} />
+            <Pager finder={finder} />
+          </div>
           <div className="pg-roster">
-            {everyone.map((pet) => {
+            {finder.total === 0 && <p className="pg-roster-empty">No pets match that.</p>}
+            {finder.shown.map((pet) => {
               const here = inside.includes(pet);
               return (
                 <button

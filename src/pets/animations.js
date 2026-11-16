@@ -1,4 +1,4 @@
-// Keyframes shared by every dog and cat. Each frame is a pose: per part,
+// Keyframes shared by every dog, cat, and rabbit. Each frame is a pose: per part,
 // either degrees or [dx, dy, degrees]. Positive angles turn clockwise, and the
 // pet faces right, so a negative leg angle swings the paw forward.
 //   root  whole pet          body  torso, turning on the hip
@@ -149,6 +149,24 @@ export const ANIMATIONS = {
       { body: [0, 5, 0], fa: -86, fb: -90, ba: 86, bb: 90, head: [0, 3, 25], tail: -60 },
       { body: [0, 5, 0], fa: -86, fb: -90, ba: 86, bb: 90, head: [1, 5, 28], tail: -70 },
     ],
+  },
+};
+
+// Where a species moves differently, its version replaces the shared one.
+// Rabbits do not trot: they hop, front paws together, then back paws.
+export const SPECIES_ANIMATIONS = {
+  rabbit: {
+    run: {
+      ms: 100,
+      loop: true,
+      tween: 3,
+      frames: [
+        { body: [0, 1, 0], fa: 12, fb: 14, ba: -22, bb: -20, head: 4, tail: 10 },
+        { root: [0, -3, -10], fa: -35, fb: -40, ba: 35, bb: 40, head: 6, tail: -10 },
+        { root: [0, -6, -3], fa: -40, fb: -45, ba: 40, bb: 45, tail: -15 },
+        { root: [0, -3, 8], fa: -25, fb: -30, ba: 10, bb: 15, head: -4 },
+      ],
+    },
   },
 };
 

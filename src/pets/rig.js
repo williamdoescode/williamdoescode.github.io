@@ -1,7 +1,7 @@
 // The pixel rig. A visitor paints one 32×32 picture; this file cuts it into
 // body parts and re-poses them to produce every animation frame. It is pure
 // math on RGBA byte arrays (no DOM), so it also runs in Node for previews.
-import { ANIMATIONS } from "./animations.js";
+import { ANIMATIONS, SPECIES_ANIMATIONS } from "./animations.js";
 
 export const SIZE = 32; // painted skin, in pixels
 export const FRAME = 48; // baked frame: extra room for jumps and lunges
@@ -11,9 +11,10 @@ export const OY = 16;
 // turn in half-pixel steps. That is what keeps the motion smooth.
 export const RES = 2;
 export const PIXELS = FRAME * RES; // real width and height of a baked frame
-// Cats are drawn a little smaller than dogs. It is applied when a pet is
-// shown, so it also covers pets painted before the sizes differed.
-export const SPECIES_SCALE = { dog: 1, cat: 0.84 };
+// Cats are drawn a little smaller than dogs, and rabbits smaller again. It is
+// applied when a pet is shown, so it also covers pets painted before the
+// sizes differed.
+export const SPECIES_SCALE = { dog: 1, cat: 0.84, rabbit: 0.76 };
 
 // Back-to-front draw order. "B" legs are on the far side of the body.
 const ORDER = ["backB", "frontB", "tail", "body", "backA", "frontA", "head"];
@@ -49,7 +50,7 @@ const PIVOTS = {
   frontA: [18.5, 25],
   frontB: [23.5, 25],
 };
-const SPECIES_PIVOTS = { cat: { tail: [6, 18.5] } };
+const SPECIES_PIVOTS = { cat: { tail: [6, 18.5] }, rabbit: { tail: [6, 18.5] } };
 const pivotsFor = (species) => ({ ...PIVOTS, ...SPECIES_PIVOTS[species] });
 
 // When a part turns, a wedge opens at its joint. To hide it, pixels close to
@@ -197,7 +198,8 @@ function between(a, b, t) {
  * by `tween - 1` in-between poses, and the frame time shrinks to match.
  */
 export function bakeAnimation(skin, name, species = "dog") {
-  const { frames: keys, ms, loop, tween = 3, linear } = ANIMATIONS[name];
+  const { frames: keys, ms, loop, tween = 3, linear } =
+    SPECIES_ANIMATIONS[species]?.[name] ?? ANIMATIONS[name];
   const poses = [];
   keys.forEach((key, i) => {
     const next = keys[i + 1] ?? (loop ? keys[0] : null);

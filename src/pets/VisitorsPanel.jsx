@@ -1,16 +1,25 @@
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Icon from "../Icon.jsx";
 import Modal from "./Modal.jsx";
+import { KindFilter, NameSearch, Pager, usePetFinder } from "./PetFinder.jsx";
 import PetTile, { useDragOut } from "./PetTile.jsx";
 import { usePets } from "./PetProvider.jsx";
 
-const PAGE = 24;
+const PAGE = 12;
 
 /** Every visitor's pet. Any of them can be dragged out onto the page. */
 export default function VisitorsPanel() {
-  const { pets, close, openEditor } = usePets();
-  const [shown, setShown] = useState(PAGE);
+  const { pets, likes, close, openEditor } = usePets();
+  const [order, setOrder] = useState("newest"); // newest | liked | name
+  const sorted = useMemo(() => {
+    if (order === "liked")
+      return [...pets].sort((a, b) => (likes[b.id] || 0) - (likes[a.id] || 0));
+    if (order === "name") return [...pets].sort((a, b) => a.name.localeCompare(b.name));
+    return pets; // the server lists the newest first
+  }, [pets, likes, order]);
+  const finder = usePetFinder(sorted, PAGE);
   const [grab, ghost, dragging] = useDragOut(close);
+  const body = useRef(null);
 
   return (
     <>
@@ -21,7 +30,7 @@ export default function VisitorsPanel() {
         data-dragging={dragging || undefined}
         onClose={close}
       >
-        <div className="pet-modal-body">
+        <div ref={body} className="pet-modal-body">
           <p className="pet-lede">
             Click a pet to say hi and give it a heart. Drag any pet out of its
             card and drop it on the page, or use <em>Let loose</em>. They are
@@ -30,22 +39,32 @@ export default function VisitorsPanel() {
           {pets.length === 0 ? (
             <p className="pet-empty">No pets yet. Yours could be the first.</p>
           ) : (
-            <ul className="pet-grid">
-              {pets.slice(0, shown).map((pet) => (
-                <PetTile key={pet.id} pet={pet} onGrab={grab} onLoose={close} />
-              ))}
-            </ul>
+            <>
+              <div className="pet-tools">
+                <KindFilter finder={finder} />
+                <NameSearch finder={finder} />
+                <label className="pet-sort">
+                  <span className="sr-only">Sort by</span>
+                  <select value={order} onChange={(event) => setOrder(event.target.value)}>
+                    <option value="newest">Newest first</option>
+                    <option value="liked">Most liked</option>
+                    <option value="name">Name A to Z</option>
+                  </select>
+                </label>
+              </div>
+              {finder.total === 0 ? (
+                <p className="pet-empty">No pets match that.</p>
+              ) : (
+                <ul className="pet-grid">
+                  {finder.shown.map((pet) => (
+                    <PetTile key={pet.id} pet={pet} onGrab={grab} onLoose={close} />
+                  ))}
+                </ul>
+              )}
+            </>
           )}
           <div className="pet-modal-actions">
-            {shown < pets.length && (
-              <button
-                className="button button-quiet"
-                type="button"
-                onClick={() => setShown(shown + PAGE)}
-              >
-                Show more
-              </button>
-            )}
+            <Pager finder={finder} onChange={() => body.current.scrollTo({ top: 0 })} />
             <button
               className="button button-primary"
               type="button"

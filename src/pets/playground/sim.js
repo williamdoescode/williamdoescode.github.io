@@ -22,6 +22,7 @@ const TOYS = {
 const WISHES = {
   dog: [["ball", 0.32], ["yarn", 0.05], ["pole", 0.03], ["doghouse", 0.09]],
   cat: [["yarn", 0.27], ["pole", 0.17], ["ball", 0.07], ["cathouse", 0.09]],
+  rabbit: [["ball", 0.12], ["yarn", 0.1], ["pole", 0.02]], // mostly hops about
 };
 
 const WALK = 46; // pixels per second
@@ -115,7 +116,7 @@ function arrive(sim, e) {
   if (!e.goal || !thing) return rest(sim, e);
   if (e.goal === "toy") {
     e.dir = thing.x < e.x ? -1 : 1;
-    const pounce = e.pet.species === "cat" && Math.random() < 0.4;
+    const pounce = e.pet.species !== "dog" && Math.random() < 0.4;
     play(sim, e, "act", pounce ? "jump" : "attack");
     const toy = TOYS[thing.type];
     knock(
@@ -219,7 +220,7 @@ export function toss(sim, thing, vx, vy, hop) {
   for (const e of sim.pets.values()) {
     if (chasers >= MAX_CHASERS) break;
     if (e.state !== "rest" && !(e.state === "walk" && e.goal !== "toy")) continue;
-    const favourite = (e.pet.species === "cat") === (thing.type === "yarn");
+    const favourite = thing.type === (e.pet.species === "dog" ? "ball" : "yarn");
     if (Math.random() > (favourite ? 0.75 : 0.25)) continue;
     chasers++;
     seek(sim, e, thing);
