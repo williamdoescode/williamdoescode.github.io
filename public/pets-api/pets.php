@@ -23,7 +23,10 @@
 // Pets saved before edit tokens existed have none, so the first edit claims
 // them (the site only offers that to the browser that created the pet).
 //
-// To enable deleting, put a long random string in data/private/admin-token.txt.
+//   POST pets.php {action:"admin", token}       -> { ok: true } if it is the admin token
+//
+// To enable deleting, put a long random string in data/private/admin-token.txt
+// (next to this file's data folder, not in the site root).
 
 declare(strict_types=1);
 
@@ -286,11 +289,23 @@ if ($action === 'like') {
     respond(200, ['id' => $id, 'likes' => count($fans), 'liked' => $liked]);
 }
 
-if ($action === 'delete') {
-    $token = trim((string) @file_get_contents($private . '/admin-token.txt'));
-    if ($token === '' || !hash_equals($token, $given)) {
-        fail(403, 'Not allowed.');
+if ($action === 'delete' || $action === 'admin') {
+    // Text editors add invisible bytes (a byte-order mark, or two bytes per
+    // letter when saved as "Unicode"); drop them so only the token is compared.
+    $token = (string) @file_get_contents($private . '/admin-token.txt');
+    $token = trim(str_replace(["\xEF\xBB\xBF", "\xFF\xFE", "\xFE\xFF", "\0"], '', $token));
+    if ($token === '') {
+        fail(403, 'Deleting is not set up yet: pets-api/data/private/admin-token.txt is missing or empty on the server.');
     }
+    if (!hash_equals($token, trim($given))) {
+        fail(403, 'That is not the admin token. It must match the text in admin-token.txt exactly.');
+    }
+}
+if ($action === 'admin') {
+    respond(200, ['ok' => true]);
+}
+
+if ($action === 'delete') {
     $pets = read_json($index);
     $kept = [];
     foreach ($pets as $pet) {

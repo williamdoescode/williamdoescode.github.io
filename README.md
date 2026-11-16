@@ -88,7 +88,7 @@ Pets saved while developing land in `public/pets-api/data/`, which is git-ignore
 
 ### Moderation
 
-Create `pets-api/data/private/admin-token.txt` on the server containing a long random string. Then open the site at `#pets-admin`, enter the token, and each card in the Visitors panel gets a Delete button. Without that file, deleting is disabled.
+Create `admin-token.txt` on the server containing a long random string, in the `data/private/` folder that sits beside the live `pets.php` (on cPanel: `public_html/pets-api/data/private/admin-token.txt`). The file holds only the token, for example `k3Vq8nZp2Lw9Xr5Tb7Ym4Hd6`. Then open the site at `#pets-admin` and enter that same text. A wrong token, or a missing file, is reported straight away; a correct one adds a Delete button to each card in the Visitors panel. This is not a pet's edit token. Without the file, deleting is disabled.
 
 ## Music
 

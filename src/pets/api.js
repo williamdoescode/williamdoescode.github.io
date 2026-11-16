@@ -45,4 +45,6 @@ export const createPet = (pet) => post({ action: "create", ...pet });
 export const updatePet = (id, token, pet) =>
   post({ action: "update", id, token, ...pet });
 export const deletePet = (id, token) => post({ action: "delete", id, token });
+/** Rejects (with the reason) unless this is the server's admin token. */
+export const checkAdmin = (token) => post({ action: "admin", token });
 export const skinUrl = (pet) => BASE + pet.skin;

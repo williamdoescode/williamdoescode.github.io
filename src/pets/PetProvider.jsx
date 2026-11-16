@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { deletePet, likePet, listPets } from "./api.js";
+import { checkAdmin, deletePet, likePet, listPets } from "./api.js";
 import { OWNER_PETS, OWNER_SKINS } from "./owner.js";
 import { rememberSkin } from "./sprites.js";
 import PetInvite from "./PetInvite.jsx";
@@ -93,11 +93,18 @@ export function PetProvider({ ready, children }) {
         setLikes(list.likes);
         if (location.hash === "#visitors") setView("visitors");
         if (location.hash === "#pets-admin") {
-          const token = window.prompt("Pets admin token");
-          if (token) {
-            setAdminToken(token);
-            setView("visitors");
-          }
+          // Check the token now, so a wrong one is reported here and not
+          // later on the first Delete.
+          const token = window.prompt("Pets admin token")?.trim();
+          if (token)
+            checkAdmin(token).then(
+              () => {
+                if (!live) return;
+                setAdminToken(token);
+                setView("visitors");
+              },
+              (error) => window.alert(error.message),
+            );
         }
       },
       () => {},
